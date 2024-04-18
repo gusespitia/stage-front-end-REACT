@@ -1,8 +1,9 @@
-import { SignupForm, LogoutButton } from "@userfront/toolkit/react";
-
+import { SignupForm } from "@userfront/toolkit/react";
+import { Button } from "@/components/ui/button";
 const Home = () => (
   <div>
-    <h2>Home</h2>
+    <h2 className="bg-black text-white">Home</h2>
+    <Button>Click me</Button>
     <SignupForm
       theme={{
         colors: {

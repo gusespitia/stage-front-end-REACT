@@ -1,10 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Routes,
-} from "react-router-dom";
-
+import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 
 import Userfront from "@userfront/toolkit/react";
 
@@ -51,7 +45,7 @@ function App() {
       </nav>
 
       <Routes>
-        <Route path="/dashboard" element={< Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/reset" element={<Reset />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
