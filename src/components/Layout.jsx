@@ -2,6 +2,7 @@
 
 import Sidebar from "@/components/Sidebar";
 import "../app/globals.css";
+import Header from "./Header";
 
 // eslint-disable-next-line react/prop-types
 const Layout = ({ children }) => {
@@ -10,7 +11,8 @@ const Layout = ({ children }) => {
       <Sidebar />
       <main
         style={{ fontFamily: "'Inter', sans-serif" }}
-        className="w-full h-full">
+        className="w-full h-full pl-[300px] grid">
+        <Header />
         {children}
       </main>
     </div>

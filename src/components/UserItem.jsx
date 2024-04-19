@@ -39,7 +39,7 @@ const UserItem = () => {
         }
 
         const result = await response.json();
-        console.log(result);
+
         setUserData(result);
       } catch (error) {
         console.log(error);
@@ -59,9 +59,7 @@ const UserItem = () => {
           />
           <div>
             <p className="font-bold text-[16px]">Hello {userData.name}!</p>
-            <p className="text-[13px] text-neutral-500]">
-               {userData.email}
-            </p>
+            <p className="text-[13px] text-neutral-500]">{userData.email}</p>
           </div>
         </div>
       )}

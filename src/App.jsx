@@ -18,8 +18,7 @@ Userfront.init("xbpwd96n");
 function App() {
   return (
     <Router>
-    <Layout>
-      
+      <Layout>
         <nav className="bg-gray-800 p-4">
           <ul className="flex flex-col md:flex-row justify-center md:justify-end space-y-2 md:space-y-0 md:space-x-4">
             <li>
@@ -35,7 +34,7 @@ function App() {
               <NavLink
                 to="/"
                 className="text-white hover:text-gray-300"
-                activeClassName="t" // Estilo para el elemento activo
+                activeClassName="text-blue-500" // Estilo para el elemento activo
                 exact // Solo activo en coincidencia exacta con la ruta
               >
                 Home
@@ -78,9 +77,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Home />} />
         </Routes>
-        </Layout>
-      </Router>
-  
+      </Layout>
+    </Router>
   );
 }
 
