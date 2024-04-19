@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 const Home = () => (
   <div>
     <h2 className="bg-black text-white">Home</h2>
-    <Button>Click me</Button>
+    <Button variant="outline">Button</Button>
     <SignupForm
       theme={{
         colors: {

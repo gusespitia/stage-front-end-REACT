@@ -1,17 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Userfront from "@userfront/toolkit/react";
-import { LogoutButton } from "@userfront/toolkit/react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
-const Dashboard = () => {
+const UserItem = () => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
@@ -59,40 +50,23 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      <LogoutButton
-        theme={{
-          colors: {
-            light: "#ffffff",
-            dark: "#5e72e4",
-            accent: "#13a0ff",
-            lightBackground: "#fdfdfd",
-            darkBackground: "#2d2d2d",
-          },
-          colorScheme: "auto",
-          fontFamily: "Avenir, Helvetica, Arial, sans-serif",
-          size: "compact",
-          extras: { rounded: true, hideSecuredMessage: false },
-        }}
-      />
-      ;
       {userData && (
-        <div className="bg-blue-400 m-8 flex gap-8 justify-around">
-          <Card key={userData.id}>
-            <CardHeader>
-              <div>Nmae: {userData.name}</div>
-              <CardTitle>Email: {userData.email}</CardTitle>
-              <CardDescription>UserNmae: {userData.username}</CardDescription>
-            </CardHeader>
-            <CardContent>PhoneNumber: {userData.phoneNumber}</CardContent>
-            <CardFooter>
-              <img src={userData.image} alt="" />
-            </CardFooter>
-          </Card>
+        <div className="flex items-center gap-4 justify-start p-2 border rounded-[8px] ">
+          <img
+            src={userData.image}
+            className="avatar rounded-full min-h-10 min-w-10 max-w-16 bg-emerald-500 p-1 mb-3"
+            alt=""
+          />
+          <div>
+            <p className="font-bold text-[16px]">Hello {userData.name}!</p>
+            <p className="text-[13px] text-neutral-500]">
+               {userData.email}
+            </p>
+          </div>
         </div>
       )}
     </div>
   );
 };
 
-export default Dashboard;
+export default UserItem;

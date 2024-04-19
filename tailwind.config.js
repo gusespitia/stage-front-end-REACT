@@ -1,4 +1,3 @@
-
 import { fontFamily } from "tailwindcss/defaultTheme";
 
 export const darkMode = ["class"];
@@ -12,7 +11,6 @@ export const theme = {
     },
   },
   extend: {
-    // Aquí puedes extender o modificar la configuración de Tailwind CSS según tus necesidades
     colors: {
       border: "hsl(var(--border))",
       input: "hsl(var(--input))",
@@ -71,5 +69,11 @@ export const theme = {
       "accordion-up": "accordion-up 0.2s ease-out",
     },
   },
+  plugins: [],
 };
 
+// Verifica si `require` está definido antes de usarlo
+if (typeof require !== "undefined") {
+  // eslint-disable-next-line no-undef
+  theme.plugins.push(require("tailwindcss-animate"));
+}
