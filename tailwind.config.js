@@ -1,4 +1,4 @@
-import tailwindcssAnimate from "tailwindcss-animate";
+
 import { fontFamily } from "tailwindcss/defaultTheme";
 
 export const darkMode = ["class"];
@@ -72,4 +72,4 @@ export const theme = {
     },
   },
 };
-export const plugins = [tailwindcssAnimate];
+

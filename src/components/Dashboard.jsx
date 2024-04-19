@@ -1,22 +1,54 @@
-import Userfront, { LogoutButton } from "@userfront/toolkit/react";
-import { useState, useEffect } from "react"; // Agrega useState y useEffect
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Userfront from "@userfront/toolkit/react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const Dashboard = () => {
-  const [privateData, setPrivateData] = useState(null); // Inicializa privateData como null
+  const [userData, setUserData] = useState(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3010/data", {
-          headers: {
-            Authorization: `Bearer ${Userfront.accessToken()}`,
-          },
-        });
+        // Verificar si el usuario está autenticado
+        if (!Userfront.accessToken()) {
+          navigate("/login");
+          return;
+        }
+
+        // Obtener el userId del token de acceso
+        const userData = JSON.parse(
+          atob(Userfront.accessToken().split(".")[1])
+        );
+        const userId = userData.userId;
+
+        // Realizar la solicitud utilizando el userId
+        const response = await fetch(
+          `https://api.userfront.com/v0/tenants/xbpwd96n/users/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                "Bearer uf_test_admin_xbpwd96n_c9a7bff77e3d3552fca270f56c9b50ea",
+            },
+          }
+        );
+
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
+
         const result = await response.json();
-        setPrivateData(result.someSecretData); // Extrae la data secreta del resultado
+        console.log(result);
+        setUserData(result);
       } catch (error) {
         console.log(error);
       }
@@ -24,39 +56,24 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // REDIRECCIONAR SI NO ESTA LOGEADO
-  const navigate = useNavigate();
-
-  if (!Userfront.accessToken()) {
-    navigate("/login");
-    return null; // o puedes retornar algo mientras se realiza la redirección
-  }
-
-  // MOSTRAR LA INFO DEL USER
-  console.log(Userfront);
-  const userData = JSON.parse(atob(Userfront.accessToken().split(".")[1]));
-
   return (
     <div>
       <h1>Dashboard</h1>
-      <h3>User Data</h3>
-      <pre>{JSON.stringify(userData, null, 2)}</pre>
-      <pre>{JSON.stringify(privateData, null, 2)}</pre>
-      <LogoutButton
-        theme={{
-          colors: {
-            light: "#ffffff",
-            dark: "#5e72e4",
-            accent: "#13a0ff",
-            lightBackground: "#fdfdfd",
-            darkBackground: "#2d2d2d",
-          },
-          colorScheme: "light",
-          fontFamily: "Avenir, Helvetica, Arial, sans-serif",
-          size: "compact",
-          extras: { rounded: true, hideSecuredMessage: false },
-        }}
-      />
+      {userData && (
+        <div className="bg-blue-400 m-8 flex gap-8 justify-around">
+          <Card key={userData.id}>
+            <CardHeader>
+              <div>Nmae: {userData.name}</div>
+              <CardTitle>Email: {userData.email}</CardTitle>
+              <CardDescription>UserNmae: {userData.username}</CardDescription>
+            </CardHeader>
+            <CardContent>PhoneNumber: {userData.phoneNumber}</CardContent>
+            <CardFooter>
+              <img src={userData.image} alt="" />
+            </CardFooter>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };
