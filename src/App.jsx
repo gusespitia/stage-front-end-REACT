@@ -19,7 +19,7 @@ function App() {
   return (
     <Router>
       <Layout>
-        <nav className="bg-gray-800 p-4">
+        {/* <nav className="bg-gray-800 p-4">
           <ul className="flex flex-col md:flex-row justify-center md:justify-end space-y-2 md:space-y-0 md:space-x-4">
             <li>
               <NavLink
@@ -69,7 +69,7 @@ function App() {
             </li>
           </ul>
         </nav>
-
+*/}
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/reset" element={<Reset />} />

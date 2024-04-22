@@ -1,7 +1,9 @@
+"use client";
 import UserItem from "./UserItem";
 import { User } from "lucide-react";
 import { Users } from "lucide-react";
 import { StickyNote } from "lucide-react";
+
 import {
   Command,
   CommandGroup,
@@ -16,15 +18,15 @@ const Sidebar = () => {
     {
       group: "General",
       items: [
-        { to: "/", icon: <User />, text: "Profile" }, // Utiliza "to" en lugar de "link"
-        { to: "/users", icon: <Users />, text: "Users" }, // Cambia "./Users.jsx" por "/users"
-        { to: "/", icon: <StickyNote />, text: "Posts" },
+        { to: "/profile", icon: <User />, text: "Profile" }, // Redirige a "/profile"
+        { to: "./dashboard", icon: <Users />, text: "Users" }, // Redirige a "/users"
+        { to: "/posts", icon: <StickyNote />, text: "Posts" }, // Redirige a "/posts"
       ],
     },
   ];
   return (
     <>
-      <div className="fixed flex flex-col gap-4 w-[300px] min-w-[300px] border-r min-h-screen p-4">
+      <div className="fixed flex flex-col gap-4 w-[240px] min-w-[220px] border-r min-h-screen p-2">
         <div>
           <UserItem />
         </div>
@@ -36,7 +38,8 @@ const Sidebar = () => {
                   <CommandItem key={key} className="flex gap-3">
                     {item.icon}
                     {/* Utiliza el componente Link para los enlaces */}
-                    <Link href={item.to}>{item.text} </Link>
+                    <Link to={item.to}>{item.text}</Link>{" "}
+                    {/* Cambia href por to */}
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -45,6 +48,7 @@ const Sidebar = () => {
           </CommandList>
         </Command>
       </div>
+      <div>{/* Aquí renderiza el componente correspondiente al enlace */}</div>
     </>
   );
 };
