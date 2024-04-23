@@ -12,6 +12,7 @@ import Home from "./components/Home";
 import Reset from "./components/Reset";
 import Register from "./components/Register";
 import Layout from "./components/Layout";
+import Backup from "./components/Backup";
 
 Userfront.init("xbpwd96n");
 
@@ -76,6 +77,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Home />} />
+          <Route path="/backup" element={<Backup />} />
         </Routes>
       </Layout>
     </Router>

@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   Form,
   FormControl,
@@ -68,9 +67,6 @@ const Dashboard = () => {
         message: "Phone number must be in the format +15558675309.",
       }
     ),
-    roles: z.array(z.string()).min(1, {
-      message: "At least one role must be selected.",
-    }),
   });
 
   const form = useForm({
@@ -80,7 +76,6 @@ const Dashboard = () => {
       username: selectedUser ? selectedUser.username : "",
       email: selectedUser ? selectedUser.email : "",
       phoneNumber: selectedUser ? selectedUser.phoneNumber : "",
-      roles: selectedUser ? selectedUser.roles : "", // Agrega el valor predeterminado para el campo 'role'
     },
   });
 
@@ -88,13 +83,7 @@ const Dashboard = () => {
     try {
       const { userId } = selectedUser;
       console.log(userId);
-
-      // Crear una copia de formData y eliminar la propiedad 'roles'
-      const formDataCopy = { ...formData };
-      delete formDataCopy.roles;
-
-      console.log(formDataCopy);
-
+      console.log(formData);
       const url = `https://back-end-knex-js.vercel.app/updateUser/${userId}`;
 
       const response = await fetch(url, {
@@ -102,14 +91,14 @@ const Dashboard = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formDataCopy),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
         setSuccessMessage("User information updated successfully.");
         // Redirige a la página de inicio o a la página de dashboard
         console.log(response);
-        window.location.href = "/dashboard"; // Redirige a la página de dashboard
+        // window.location.href = "/dashboard"; // Redirige a la página de dashboard
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message);
@@ -120,42 +109,9 @@ const Dashboard = () => {
     }
   };
 
-  const handleUserRoleUpdate = async (userId, roles) => {
-    try {
-      const { userId } = selectedUser;
-      console.log(userId, roles);
-      const url = `https://back-end-knex-js.vercel.app/updateUserRole/${userId}`;
-      const response = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ roles: roles }), // Envía el rol actualizado como un array
-      });
-
-      if (response.ok) {
-        console.log(`User role updated successfully to ${roles}`);
-        // Puedes mostrar un mensaje de éxito si lo deseas
-      } else {
-        const errorData = await response.json();
-        console.error("Error updating user role:", errorData.message);
-        // Puedes mostrar un mensaje de error si lo deseas
-      }
-    } catch (error) {
-      console.error("Error updating user role:", error);
-      // Puedes mostrar un mensaje de error si lo deseas
-    }
-  };
-
   const onSubmit = async (data) => {
-    // Manejar la actualización de la información del usuario
     await handleEditUser(data);
-
-    // Manejar la actualización del rol del usuario
-    const { userId, roles } = data;
-    const rolesToSend = Array.isArray(roles) ? roles : [roles];
-
-    await handleUserRoleUpdate(userId, rolesToSend);
+    console.log(data);
   };
 
   useEffect(() => {
@@ -165,7 +121,6 @@ const Dashboard = () => {
         username: selectedUser.username,
         email: selectedUser.email,
         phoneNumber: selectedUser.phoneNumber,
-        roles: selectedUser.roles, // Corregido para incluir los roles
       });
     }
   }, [selectedUser, form]);
@@ -174,54 +129,10 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://api.userfront.com/v0/tenants/xbpwd96n/users/find",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization:
-                "Bearer uf_test_admin_xbpwd96n_c9a7bff77e3d3552fca270f56c9b50ea",
-            },
-            body: JSON.stringify({
-              filters: {
-                conjunction: "and",
-                filterGroups: [
-                  {
-                    conjunction: "and",
-                    filters: [],
-                  },
-                ],
-              },
-            }),
-          }
+          "https://back-end-knex-js.vercel.app/api/users"
         );
-
-        if (response.ok) {
-          const data = await response.json();
-          setUsersData(data.results);
-          // console.log(data);
-          // Suponiendo que 'data' es el objeto que has mostrado
-          const users = data.results; // Obtener el array de resultados de usuarios
-
-          // Iterar sobre cada usuario
-          users.forEach((user) => {
-            // Acceder a los roles del usuario
-            const roles = user.authorization?.xbpwd96n?.roles;
-
-            if (roles) {
-              console.log("Roles del usuario founded");
-            } else {
-              console.log("No se encontraron roles para el usuario");
-            }
-          });
-
-          // Aquí puedes manejar los datos recibidos, como establecer el estado o realizar otras operaciones
-        } else {
-          console.error(
-            "Error en la respuesta de la solicitud:",
-            response.statusText
-          );
-        }
+        const data = await response.json();
+        setUsersData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -251,7 +162,7 @@ const Dashboard = () => {
                 <TableHead>Image</TableHead>
                 <TableHead>Phone</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Roles</TableHead>
+                <TableHead>Rol</TableHead>
                 <TableHead>Actions</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -268,10 +179,7 @@ const Dashboard = () => {
                   </TableCell>
                   <TableCell>{user.phoneNumber}</TableCell>
                   <TableCell>{user.status}</TableCell>
-                  <TableCell>
-                    {user.authorization?.xbpwd96n?.roles.join(", ") ||
-                      "No roles"}
-                  </TableCell>
+                  <TableCell>{user.roles}</TableCell>
 
                   <TableCell>
                     <AlertDialog>
@@ -360,40 +268,6 @@ const Dashboard = () => {
                               </FormItem>
                             )}
                           />
-                          <FormField
-                            control={form.control}
-                            name="roles"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Roles</FormLabel>
-                                <Select
-                                  onValueChange={(value) =>
-                                    field.onChange([value])
-                                  } // Convertir el valor a un array
-                                  defaultValue={
-                                    field.value ? field.value[0] : null
-                                  } // Seleccionar el primer valor del array
-                                >
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select a role" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="student">
-                                      Student
-                                    </SelectItem>
-                                    <SelectItem value="teacher">
-                                      Teacher
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <FormDescription></FormDescription>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
                           <FormField
                             control={form.control}
                             name="status"

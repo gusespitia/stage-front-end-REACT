@@ -1,7 +1,12 @@
-import { fontFamily } from "tailwindcss/defaultTheme";
-
+/** @type {import('tailwindcss').Config} */
 export const darkMode = ["class"];
-export const content = ["./src/**/*.{html,jsx,css,js}"];
+export const content = [
+  './pages/**/*.{ts,tsx,jsx}',
+  './components/**/*.{ts,tsx,jsx}',
+  './app/**/*.{ts,tsx,jsx}',
+  './src/**/*.{ts,tsx,jsx}',
+];
+export const prefix = "";
 export const theme = {
   container: {
     center: true,
@@ -47,12 +52,9 @@ export const theme = {
       },
     },
     borderRadius: {
-      lg: `var(--radius)`,
-      md: `calc(var(--radius) - 2px)`,
+      lg: "var(--radius)",
+      md: "calc(var(--radius) - 2px)",
       sm: "calc(var(--radius) - 4px)",
-    },
-    fontFamily: {
-      sans: ["var(--font-sans)", ...fontFamily.sans],
     },
     keyframes: {
       "accordion-down": {
@@ -69,11 +71,5 @@ export const theme = {
       "accordion-up": "accordion-up 0.2s ease-out",
     },
   },
-  plugins: [],
 };
-
-// Verifica si `require` está definido antes de usarlo
-if (typeof require !== "undefined") {
-  // eslint-disable-next-line no-undef
-  theme.plugins.push(require("tailwindcss-animate"));
-}
+export const plugins = [require("tailwindcss-animate")];
