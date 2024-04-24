@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
       <Sidebar />
       <main
         style={{ fontFamily: "'Inter', sans-serif" }}
-        className="w-full h-full pl-[240px] grid">
+        className="w-full h-full pl-[260px] grid">
         <Header />
         {children}
       </main>

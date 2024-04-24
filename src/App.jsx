@@ -26,7 +26,7 @@ function App() {
               <NavLink
                 to="/dashboard"
                 className="text-white hover:text-gray-300"
-                activeClassName="text-blue-500" // Estilo para el elemento activo
+                activeclassname="text-blue-500" // Estilo para el elemento activo
               >
                 Dashboard
               </NavLink>
@@ -35,7 +35,7 @@ function App() {
               <NavLink
                 to="/"
                 className="text-white hover:text-gray-300"
-                activeClassName="text-blue-500" // Estilo para el elemento activo
+                activeclassname="text-blue-500" // Estilo para el elemento activo
                 exact // Solo activo en coincidencia exacta con la ruta
               >
                 Home
@@ -45,7 +45,7 @@ function App() {
               <NavLink
                 to="/login"
                 className="text-white hover:text-gray-300"
-                activeClassName="text-blue-500" // Estilo para el elemento activo
+                activeclassname="text-blue-500" // Estilo para el elemento activo
               >
                 Login
               </NavLink>
@@ -54,7 +54,7 @@ function App() {
               <NavLink
                 to="/register"
                 className="text-white hover:text-gray-300"
-                activeClassName="text-blue-500" // Estilo para el elemento activo
+                activeclassname="text-blue-500" // Estilo para el elemento activo
               >
                 Register
               </NavLink>
@@ -63,14 +63,13 @@ function App() {
               <NavLink
                 to="/reset"
                 className="text-white hover:text-gray-300"
-                activeClassName="text-blue-500" // Estilo para el elemento activo
+                activeclassname="text-blue-500" // Estilo para el elemento activo
               >
                 Pass-forget
               </NavLink>
             </li>
           </ul>
-        </nav>
-*/}
+        </nav> */}
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/reset" element={<Reset />} />

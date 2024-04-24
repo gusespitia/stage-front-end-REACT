@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 
 import {
-  Form,
+  // Form,
   FormControl,
   FormDescription,
   FormField,
@@ -236,135 +236,136 @@ const Dashboard = () => {
 
   return (
     <>
-      <div>
-        <FormProvider {...form}>
-          <Table>
-            <TableCaption className="p-2 text-xl">
-              A list of all the users.
-            </TableCaption>
-            <TableHeader className="text-white">
-              <TableRow className="bg-slate-400">
-                <TableHead>Id</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Username</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Image</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Roles</TableHead>
-                <TableHead>Actions</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {usersData.map((user, key) => (
-                <TableRow key={key}>
-                  <TableCell className="font-medium">{user.userId}</TableCell>
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell>{user.username}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    <img src={user.image} alt="" width="30px" />
-                  </TableCell>
-                  <TableCell>{user.phoneNumber}</TableCell>
-                  <TableCell>{user.status}</TableCell>
-                  <TableCell>
-                    {user.authorization?.xbpwd96n?.roles.join(", ") ||
-                      "No roles"}
-                  </TableCell>
+      <FormProvider {...form}>
+        <Table>
+          <TableCaption className="p-2 text-xl">
+            A list of all the users.
+          </TableCaption>
+          <TableHeader className="text-white">
+            <TableRow className="bg-slate-400">
+              <TableHead>Id</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Username</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Image</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Roles</TableHead>
+              <TableHead>Actions</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {usersData.map((user, key) => (
+              <TableRow key={key}>
+                <TableCell className="font-medium">{user.userId}</TableCell>
+                <TableCell>{user.name}</TableCell>
+                <TableCell>{user.username}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>
+                  <img src={user.image} alt="" width="30px" />
+                </TableCell>
+                <TableCell>{user.phoneNumber}</TableCell>
+                <TableCell>{user.status}</TableCell>
+                <TableCell>
+                  {user.authorization?.xbpwd96n?.roles.join(", ") || "No roles"}
+                </TableCell>
 
-                  <TableCell>
-                    <AlertDialog>
-                      <AlertDialogTrigger
-                        className="bg-blue-800 px-4 py-2 border rounded-md text-white"
-                        onClick={() => handleUserSelect(user)}>
-                        Edit
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action will edit the data of the following
-                            user: {user.name}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
+                <TableCell>
+                  <AlertDialog>
+                    <AlertDialogTrigger
+                      className="bg-blue-800 px-4 py-2 border rounded-md text-white"
+                      onClick={() => handleUserSelect(user)}>
+                      Edit
+                    </AlertDialogTrigger>
+                    <AlertDialogContent
+                      className="bg-slate-600"
+                      style={{ maxHeight: "700px", overflowY: "auto" }}>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="">
+                          Edit Form
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action will edit the data of the following user:{" "}
+                          {user.name}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
 
-                        <form
-                          onSubmit={form.handleSubmit(onSubmit)}
-                          className="w-2/3 space-y-3">
-                          <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Name</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    defaultValue={field.value}
-                                    onChange={field.onChange}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                      <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="w-2/3 space-y-3">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Name</FormLabel>
+                              <FormControl>
+                                <Input
+                                  defaultValue={field.value}
+                                  onChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                          <FormField
-                            control={form.control}
-                            name="username"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Username</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    defaultValue={field.value}
-                                    onChange={field.onChange}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                        <FormField
+                          control={form.control}
+                          name="username"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Username</FormLabel>
+                              <FormControl>
+                                <Input
+                                  defaultValue={field.value}
+                                  onChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                          <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    defaultValue={field.value}
-                                    onChange={field.onChange}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="phoneNumber"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Phone Number</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    defaultValue={field.value}
-                                    onChange={field.onChange}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email</FormLabel>
+                              <FormControl>
+                                <Input
+                                  defaultValue={field.value}
+                                  onChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="phoneNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Phone Number</FormLabel>
+                              <FormControl>
+                                <Input
+                                  defaultValue={field.value}
+                                  onChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <div className="flex gap-8">
                           <FormField
                             control={form.control}
                             name="roles"
                             render={({ field }) => (
-                              <FormItem>
+                              <FormItem className="w-80">
                                 <FormLabel>Roles</FormLabel>
                                 <Select
                                   onValueChange={(value) =>
@@ -393,7 +394,6 @@ const Dashboard = () => {
                               </FormItem>
                             )}
                           />
-
                           <FormField
                             control={form.control}
                             name="status"
@@ -402,7 +402,7 @@ const Dashboard = () => {
                                 <FormLabel>Status</FormLabel>
                                 <FormControl>
                                   <Input
-                                    defaultValue={field.value}
+                                    defaultValue="1"
                                     onChange={field.onChange}
                                   />
                                 </FormControl>
@@ -410,50 +410,52 @@ const Dashboard = () => {
                               </FormItem>
                             )}
                           />
-                          <Button
-                            type="submit"
-                            onClick={() => console.log("hola")}>
-                            Submit
-                          </Button>
-                        </form>
+                        </div>
 
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction>Continue</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
-                  <TableCell>
-                    <AlertDialog>
-                      <AlertDialogTrigger className="px-2 py-2 border rounded-md text-white bg-red-700">
-                        Delete
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete your account and remove your data from our
-                            servers.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
+                        <Button
+                          type="submit"
+                          onClick={() => console.log("hola")}>
+                          Submit
+                        </Button>
+                      </form>
 
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction>Continue</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </FormProvider>
-      </div>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction>Continue</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+                <TableCell>
+                  <AlertDialog>
+                    <AlertDialogTrigger className="px-2 py-2 border rounded-md text-white bg-red-700">
+                      Delete
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your account and remove your data from our
+                          servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction>Continue</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </FormProvider>
+
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
       {successMessage && <p className="text-green-600">{successMessage}</p>}
     </>
