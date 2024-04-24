@@ -3,6 +3,7 @@ import { User } from "lucide-react";
 import { Users } from "lucide-react";
 import { StickyNote } from "lucide-react";
 import { Link } from "react-router-dom";
+import { LogoutButton } from "@userfront/toolkit/react";
 
 import {
   Command,
@@ -38,7 +39,9 @@ const Sidebar = () => {
                   <div className=" flex gap-5 py-1 hover:translate-x-1 hover:text-primary hover:text-blue-900 font-medium">
                     {item.icon}
                     <li className="list-none hover:translate-x-1 hover:text-primary hover:text-blue-900 font-medium">
-                      <Link to={item.to}>{item.text}</Link>
+                      <Link to={item.to} exact="true">
+                        {item.text}
+                      </Link>
                     </li>
                   </div>
                 </div>
@@ -48,6 +51,23 @@ const Sidebar = () => {
           <CommandSeparator />
         </CommandList>
       </Command>
+      <div className="w-20">
+        <LogoutButton
+          theme={{
+            colors: {
+              light: "#ffffff",
+              dark: "#5e72e4",
+              accent: "#13a0ff",
+              lightBackground: "#fdfdfd",
+              darkBackground: "#2d2d2d",
+            },
+            colorScheme: "auto",
+            fontFamily: "Avenir, Helvetica, Arial, sans-serif",
+            size: "compact",
+            extras: { rounded: true, hideSecuredMessage: false },
+          }}
+        />
+      </div>
     </div>
   );
 };

@@ -41,12 +41,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const Dashboard = () => {
   const [usersData, setUsersData] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false); // Nuevo estado para la confirmación de eliminación
 
   const formSchema = z.object({
     name: z.string().min(2, {
@@ -108,7 +110,7 @@ const Dashboard = () => {
       if (response.ok) {
         setSuccessMessage("User information updated successfully.");
         // Redirige a la página de inicio o a la página de dashboard
-        console.log(response);
+
         window.location.href = "/dashboard"; // Redirige a la página de dashboard
       } else {
         const errorData = await response.json();
@@ -154,7 +156,6 @@ const Dashboard = () => {
     // Manejar la actualización del rol del usuario
     const { userId, roles } = data;
     const rolesToSend = Array.isArray(roles) ? roles : [roles];
-
     await handleUserRoleUpdate(userId, rolesToSend);
   };
 
@@ -234,27 +235,83 @@ const Dashboard = () => {
     setSelectedUser(user);
   };
 
+  const deleteUser = async (userId) => {
+    try {
+      const response = await fetch(
+        `https://api.userfront.com/v0/tenants/vbqwm45b/users/${userId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization:
+              "Bearer uf_test_admin_xbpwd96n_c9a7bff77e3d3552fca270f56c9b50ea",
+          },
+        }
+      );
+
+      if (response.ok) {
+        console.log("User deleted successfully");
+        setDeleteConfirmation(true);
+        window.location.href = "/dashboard"; // Redirige a la página de dashboard
+        return true; // Indica que la eliminación del usuario fue exitosa
+      } else {
+        console.error("Failed to delete user");
+        return false; // Indica que la eliminación del usuario falló
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      return false; // Indica que la eliminación del usuario falló debido a un error
+    }
+  };
+
+  const handleClickContinue = async (userId) => {
+    try {
+      const deletionSuccessful = await deleteUser(userId);
+      if (deletionSuccessful) {
+        // Muestra el mensaje de éxito después de eliminar el usuario con éxito
+        setSuccessMessage("User deleted successfully.");
+
+        // Cierra el mensaje de éxito después de 3 segundos
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 3000);
+      } else {
+        // Puedes mostrar un mensaje de error si la eliminación del usuario falló
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      // Puedes mostrar un mensaje de error si la eliminación del usuario falló debido a un error
+    }
+  };
+
   return (
     <>
       <FormProvider {...form}>
         <Table>
-          <TableCaption className="p-2 text-xl">
+          <TableCaption className="p-0 text-xl m-0">
+            <div className="h-6 text-center bg-slate-400 w-full m-0 p-0">
+              {successMessage && (
+                <p className="text-green-600">{successMessage}</p>
+              )}
+            </div>
             A list of all the users.
           </TableCaption>
-          <TableHeader className="text-white">
-            <TableRow className="bg-slate-400">
-              <TableHead>Id</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Username</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Image</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Roles</TableHead>
-              <TableHead>Actions</TableHead>
-              <TableHead>Actions</TableHead>
+
+          <TableHeader>
+            <TableRow className="bg-slate-400 text-black">
+              <TableHead className="text-black">Id</TableHead>
+              <TableHead className="text-black">Name</TableHead>
+              <TableHead className="text-black">Username</TableHead>
+              <TableHead className="text-black">Email</TableHead>
+              <TableHead className="text-black">Image</TableHead>
+              <TableHead className="text-black">Phone</TableHead>
+              <TableHead className="text-black">Status</TableHead>
+              <TableHead className="text-black">Roles</TableHead>
+              <TableHead className="text-black">Actions</TableHead>
+              <TableHead className="text-black">Actions</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {usersData.map((user, key) => (
               <TableRow key={key}>
@@ -266,7 +323,7 @@ const Dashboard = () => {
                   <img src={user.image} alt="" width="30px" />
                 </TableCell>
                 <TableCell>{user.phoneNumber}</TableCell>
-                <TableCell>{user.status}</TableCell>
+                <TableCell> {user.status ? user.status : 1}</TableCell>
                 <TableCell>
                   {user.authorization?.xbpwd96n?.roles.join(", ") || "No roles"}
                 </TableCell>
@@ -372,7 +429,9 @@ const Dashboard = () => {
                                     field.onChange([value])
                                   } // Convertir el valor a un array
                                   defaultValue={
-                                    field.value ? field.value[0] : null
+                                    user.authorization?.xbpwd96n?.roles.join(
+                                      ", "
+                                    ) || "No roles"
                                   } // Seleccionar el primer valor del array
                                 >
                                   <FormControl>
@@ -412,11 +471,7 @@ const Dashboard = () => {
                           />
                         </div>
 
-                        <Button
-                          type="submit"
-                          onClick={() => console.log("hola")}>
-                          Submit
-                        </Button>
+                        <Button type="submit">Submit</Button>
                       </form>
 
                       <AlertDialogFooter>
@@ -442,10 +497,18 @@ const Dashboard = () => {
                           servers.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
-
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction>Continue</AlertDialogAction>
+                        <AlertDialogAction
+                          onClick={async () => {
+                            await handleClickContinue(user.userId);
+                            // Muestra la alerta de usuario eliminado exitosamente después de que la solicitud sea exitosa
+                            setSuccessMessage(
+                              "User deleted successfully. This action cannot be undone."
+                            );
+                          }}>
+                          Continue
+                        </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
@@ -457,7 +520,6 @@ const Dashboard = () => {
       </FormProvider>
 
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
-      {successMessage && <p className="text-green-600">{successMessage}</p>}
     </>
   );
 };
