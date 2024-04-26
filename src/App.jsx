@@ -12,9 +12,9 @@ import Home from "./components/Home";
 import Reset from "./components/Reset";
 import Register from "./components/Register";
 import Layout from "./components/Layout";
-import Backup from "./components/Backup";
 import Profile from "./components/Profile";
-
+import Post from "./components/Post";
+import Posts from "./components/Posts";
 Userfront.init("xbpwd96n");
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
               <NavLink
                 to="/dashboard"
                 className="text-white hover:text-gray-300"
-                activeclassname="text-blue-500" // Estilo para el elemento activo
+                activeclassname="text-blue-500" // Cambio activeClassName aquí
               >
                 Dashboard
               </NavLink>
@@ -36,8 +36,8 @@ function App() {
               <NavLink
                 to="/"
                 className="text-white hover:text-gray-300"
-                activeclassname="text-blue-500" // Estilo para el elemento activo
-                exact // Solo activo en coincidencia exacta con la ruta
+                activeclassname="text-blue-500" // Cambio activeClassName aquí
+                exact // Cambio aquí
               >
                 Home
               </NavLink>
@@ -46,7 +46,7 @@ function App() {
               <NavLink
                 to="/login"
                 className="text-white hover:text-gray-300"
-                activeclassname="text-blue-500" // Estilo para el elemento activo
+                activeclassname="text-blue-500" // Cambio activeClassName aquí
               >
                 Login
               </NavLink>
@@ -55,7 +55,7 @@ function App() {
               <NavLink
                 to="/register"
                 className="text-white hover:text-gray-300"
-                activeclassname="text-blue-500" // Estilo para el elemento activo
+                activeclassname="text-blue-500" // Cambio activeClassName aquí
               >
                 Register
               </NavLink>
@@ -64,7 +64,16 @@ function App() {
               <NavLink
                 to="/reset"
                 className="text-white hover:text-gray-300"
-                activeclassname="text-blue-500" // Estilo para el elemento activo
+                activeclassname="text-blue-500" // Cambio activeClassName aquí
+              >
+                Pass-forget
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/posts"
+                className="text-white hover:text-gray-300"
+                activeclassname="text-blue-500" // Cambio activeClassName aquí
               >
                 Pass-forget
               </NavLink>
@@ -72,13 +81,14 @@ function App() {
           </ul>
         </nav>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/reset" element={<Reset />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/backup" element={<Backup />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/post" element={<Post />} />
+          <Route path="/posts" element={<Posts />} />
         </Routes>
       </Layout>
     </Router>

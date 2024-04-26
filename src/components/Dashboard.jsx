@@ -260,7 +260,6 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error("An error occurred:", error);
-      return false; // Indica que la eliminación del usuario falló debido a un error
     }
   };
 

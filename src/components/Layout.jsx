@@ -1,5 +1,3 @@
-// En tu componente Layout.jsx
-
 import Sidebar from "@/components/Sidebar";
 import "../app/globals.css";
 import Header from "./Header";

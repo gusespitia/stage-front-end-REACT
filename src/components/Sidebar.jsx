@@ -2,7 +2,7 @@ import UserItem from "./UserItem";
 import { User } from "lucide-react";
 import { Users } from "lucide-react";
 import { StickyNote } from "lucide-react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { LogoutButton } from "@userfront/toolkit/react";
 
 import {
@@ -20,13 +20,14 @@ const Sidebar = () => {
       items: [
         { to: "/profile", icon: <User />, text: "Profile" },
         { to: "/dashboard", icon: <Users />, text: "Dashboard" },
+        { to: "/post", icon: <StickyNote />, text: "Post" },
         { to: "/posts", icon: <StickyNote />, text: "Posts" },
       ],
     },
   ];
 
   return (
-    <div className="fixed flex flex-col gap-4 w-[260px] min-w-[250px] border-r min-h-screen p-2">
+    <div className="fixed flex flex-col gap-4 w-[260px] min-w-[250px] border-r min-h-screen p-2 bg-white">
       <div>
         <UserItem />
       </div>
@@ -36,12 +37,15 @@ const Sidebar = () => {
             <CommandGroup key={key} heading={menu.group}>
               {menu.items.map((item, itemKey) => (
                 <div key={itemKey}>
-                  <div className=" flex gap-5 py-1 hover:translate-x-1 hover:text-primary hover:text-blue-900 font-medium">
+                  <div className="flex gap-5 py-1 hover:translate-x-1 hover:text-primary hover:text-blue-900 font-medium">
                     {item.icon}
                     <li className="list-none hover:translate-x-1 hover:text-primary hover:text-blue-900 font-medium">
-                      <Link to={item.to} exact="true">
+                      <NavLink
+                        to={item.to}
+                        exact="true"
+                        activeclassname="text-blue-500">
                         {item.text}
-                      </Link>
+                      </NavLink>
                     </li>
                   </div>
                 </div>

@@ -1,95 +1,88 @@
-import { Link } from "react-router-dom";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Userfront from "@userfront/toolkit/react";
-
-import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
-  FormField,
   FormItem,
+  FormField,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+
+import Userfront from "@userfront/toolkit/react";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/components/ui/use-toast";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
-const profileFormSchema = z.object({
-  username: z
-    .string()
-    .min(2, {
-      message: "Username must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "Username must not be longer than 30 characters.",
-    }),
-  email: z
-    .string({
-      required_error: "Please select an email to display.",
-    })
-    .email(),
-  bio: z.string().max(160).min(4),
-  urls: z
-    .array(
-      z.object({
-        value: z.string().url({ message: "Please enter a valid URL." }),
-      })
-    )
-    .optional(),
+const FormSchema = z.object({
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  image: z.string().min(2, {
+    message: "image must be an url",
+  }),
+  username: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  email: z.string().email({
+    message: "Invalid email address.",
+  }),
+  phoneNumber: z.string().refine(
+    (value) => {
+      const phoneNumberRegex = /^\+\d{11}$/; // Formato: +15558675309
+      return phoneNumberRegex.test(value);
+    },
+    {
+      message: "Phone number must be in the format +15558675309.",
+    }
+  ),
 });
-
-const defaultValues = {
-  bio: "I own a computer.",
-  urls: [
-    { value: "https://shadcn.com" },
-    { value: "http://twitter.com/shadcn" },
-  ],
-};
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const form = useForm({
-    resolver: zodResolver(profileFormSchema),
-    defaultValues,
-    mode: "onChange",
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      name: "",
+      image: "",
+      username: "",
+      email: "",
+      phoneNumber: "",
+    },
   });
 
-  const { fields, append } = useFieldArray({
-    name: "urls",
-    control: form.control,
-  });
+  const formRef = useRef(null); // Referencia al formulario
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Verificar si el usuario está autenticado
         if (!Userfront.accessToken()) {
           navigate("/login");
           return;
         }
 
-        // Obtener el userId del token de acceso
         const userData = JSON.parse(
           atob(Userfront.accessToken().split(".")[1])
         );
+
         const userId = userData.userId;
 
-        // Realizar la solicitud utilizando el userId
         const response = await fetch(
           `https://api.userfront.com/v0/tenants/xbpwd96n/users/${userId}`,
           {
@@ -107,20 +100,10 @@ const Profile = () => {
         }
 
         const result = await response.json();
+        // console.log(result);
 
-        // Setear userData con la respuesta obtenida
+        // Actualiza el estado userData con los datos del usuario
         setUserData(result);
-
-        // Setear los valores del formulario con userData
-        form.setValue("username", result.username);
-        form.setValue("email", result.email);
-        form.setValue("name", result.name);
-        form.setValue("phoneNumber", result.phoneNumber);
-
-        // Setear los valores de los campos de URLs
-        result.urls.forEach((url, index) => {
-          form.setValue(`urls.${index}.value`, url);
-        });
       } catch (error) {
         console.log(error);
       }
@@ -128,104 +111,184 @@ const Profile = () => {
     fetchData();
   }, []);
 
-  function onSubmit(data) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  }
+  useEffect(() => {
+    if (userData) {
+      // Actualiza los valores iniciales del formulario con los datos del usuario
+      form.reset({
+        name: userData.name,
+        image: userData.image,
+        username: userData.username,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber,
+      });
+    }
+  }, [userData, form]);
+
+  const onSubmit = async (data) => {
+    try {
+      // Realiza la solicitud para actualizar los datos del usuario en el servidor
+      const response = await fetch(
+        `https://back-end-knex-js.vercel.app/updateUser/${userData.userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (response.ok) {
+        // Si la solicitud es exitosa, muestra un mensaje de éxito
+        setIsAlertDialogOpen(true);
+        setMessage("User data updated successfully!");
+        setTimeout(() => {
+          setIsAlertDialogOpen(true);
+          setMessage(false);
+        }, 5000);
+      } else {
+        // Si la solicitud falla, muestra un mensaje de error
+        setMessage("Failed to update user data");
+      }
+    } catch (error) {
+      console.error("Error updating user data:", error);
+    }
+  };
+
+  const handleContinueAction = () => {
+    form.handleSubmit(onSubmit)(); // Envía automáticamente el formulario después de 4 segundos
+  };
 
   return (
-    <div className="mx-20 max-w-screen-xl my-6">
-      Profile
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="shadcn" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="shadcn" {...field} />
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <div className="mx-40 max-w-screen-xl my-2 bg-slate-300 border rounded-xl p-0 ">
+      <div className="w-full">
+        {userData && (
+          <div className="flex items-start gap-4 justify-start p-3 border rounded-[8px] px-20">
+            <img
+              src={userData.image}
+              className="rounded-md min-w-40 max-w-56 bg-emerald-500 p-1 mb-3"
+              alt="image of user"
+            />
+            <div>
+              <h2 className="font-bold">
+                Hello {userData.name.split(" ")[0]}!
+              </h2>
+              {(message && (
+                <div className="mt-4 text-center text-white bg-green-500 p-2 rounded-md w-96">
+                  {message}
+                </div>
+              )) || (
+                <p className="my-4 w-96">
+                  Here you can edit your personal information
+                </p>
+              )}
+              <Form {...form}>
+                <form
+                  ref={formRef} // Asigna la referencia al formulario
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="w-full space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="image"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Image</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Username</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="phoneNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Phone Number</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="example@gmail.com" {...field} />
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="phoneNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>PhoneNumber</FormLabel>
-                <FormControl>
-                  <Input placeholder="+3100000000" {...field} />
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="roles"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Rol</FormLabel>
-                <FormControl>
-                  <Input placeholder="student" {...field} />
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit">Update profile</Button>
-        </form>
-      </Form>
+                  <AlertDialog
+                    isOpen={isAlertDialogOpen}
+                    onClose={() => setIsAlertDialogOpen(false)}>
+                    <AlertDialogTrigger>
+                      <button
+                        type="button"
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+                        Edit
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your account and remove your data from our
+                          servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleContinueAction()}>
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </form>
+              </Form>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
