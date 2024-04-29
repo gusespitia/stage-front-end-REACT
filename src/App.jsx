@@ -15,13 +15,14 @@ import Layout from "./components/Layout";
 import Profile from "./components/Profile";
 import Post from "./components/Post";
 import Posts from "./components/Posts";
+
 Userfront.init("xbpwd96n");
 
 function App() {
   return (
     <Router>
       <Layout>
-        <nav className="bg-gray-800 p-4">
+        {/* <nav className="bg-gray-800 p-4">
           <ul className="flex flex-col md:flex-row justify-center md:justify-end space-y-2 md:space-y-0 md:space-x-4">
             <li>
               <NavLink
@@ -79,7 +80,7 @@ function App() {
               </NavLink>
             </li>
           </ul>
-        </nav>
+        </nav> */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />

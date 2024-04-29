@@ -2,6 +2,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+
 import {
   Select,
   SelectContent,
@@ -41,7 +43,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+// import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const Dashboard = () => {
   const [usersData, setUsersData] = useState([]);
@@ -73,6 +75,7 @@ const Dashboard = () => {
     roles: z.array(z.string()).min(1, {
       message: "At least one role must be selected.",
     }),
+    locked: z.boolean(), // Agregamos la validación para el campo 'locked'
   });
 
   const form = useForm({
@@ -83,6 +86,7 @@ const Dashboard = () => {
       email: selectedUser ? selectedUser.email : "",
       phoneNumber: selectedUser ? selectedUser.phoneNumber : "",
       roles: selectedUser ? selectedUser.roles : "", // Agrega el valor predeterminado para el campo 'role'
+      locked: selectedUser ? selectedUser.locked : false, // Agrega el valor predeterminado para el campo 'locked'
     },
   });
 
@@ -111,7 +115,7 @@ const Dashboard = () => {
         setSuccessMessage("User information updated successfully.");
         // Redirige a la página de inicio o a la página de dashboard
 
-        window.location.href = "/dashboard"; // Redirige a la página de dashboard
+        //  window.location.href = "/dashboard"; // Redirige a la página de dashboard
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message);
@@ -159,6 +163,11 @@ const Dashboard = () => {
     await handleUserRoleUpdate(userId, rolesToSend);
   };
 
+  const handleChangeLocked = (checked) => {
+    // Actualizar el valor de locked en el formulario cuando cambia el Switch
+    form.setValue("locked", !checked);
+  };
+
   useEffect(() => {
     if (selectedUser) {
       form.reset({
@@ -167,6 +176,7 @@ const Dashboard = () => {
         email: selectedUser.email,
         phoneNumber: selectedUser.phoneNumber,
         roles: selectedUser.roles, // Corregido para incluir los roles
+        locked: selectedUser.locked, // Corregido para incluir los roles
       });
     }
   }, [selectedUser, form]);
@@ -200,7 +210,7 @@ const Dashboard = () => {
         if (response.ok) {
           const data = await response.json();
           setUsersData(data.results);
-          // console.log(data);
+          console.log(data.results);
           // Suponiendo que 'data' es el objeto que has mostrado
           const users = data.results; // Obtener el array de resultados de usuarios
 
@@ -322,7 +332,19 @@ const Dashboard = () => {
                   <img src={user.image} alt="" width="30px" />
                 </TableCell>
                 <TableCell>{user.phoneNumber}</TableCell>
-                <TableCell> {user.status ? user.status : 1}</TableCell>
+                <TableCell>
+                  {" "}
+                  {user.locked ? (
+                    0
+                  ) : (
+                    <Switch
+                      checked={user.value}
+                      onCheckedChange={(checked) => handleChangeLocked(checked)}
+                      enable
+                      aria-readonly
+                    />
+                  )}{" "}
+                </TableCell>
                 <TableCell>
                   {user.authorization?.xbpwd96n?.roles.join(", ") || "No roles"}
                 </TableCell>
@@ -416,6 +438,26 @@ const Dashboard = () => {
                             </FormItem>
                           )}
                         />
+                        <FormField
+                          control={form.control}
+                          name="locked"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Locked</FormLabel>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={(checked) =>
+                                    handleChangeLocked(checked)
+                                  }
+                                  enable
+                                  aria-readonly
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                         <div className="flex gap-8">
                           <FormField
                             control={form.control}
@@ -452,12 +494,12 @@ const Dashboard = () => {
                               </FormItem>
                             )}
                           />
-                          <FormField
+                          {/* <FormField
                             control={form.control}
-                            name="status"
+                            name="locked"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Status</FormLabel>
+                                <FormLabel>Locked</FormLabel>
                                 <FormControl>
                                   <Input
                                     defaultValue="1"
@@ -467,7 +509,7 @@ const Dashboard = () => {
                                 <FormMessage />
                               </FormItem>
                             )}
-                          />
+                          /> */}
                         </div>
 
                         <Button type="submit">Submit</Button>

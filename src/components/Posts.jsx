@@ -69,6 +69,7 @@ const Post = () => {
         throw new Error("Failed to fetch posts");
       }
       const data = await response.json();
+      console.log(data);
       return data;
     } catch (error) {
       console.error("Error fetching posts:", error);
