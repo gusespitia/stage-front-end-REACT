@@ -238,7 +238,7 @@ const Dashboard = () => {
         if (response.ok) {
           const data = await response.json();
           setUsersData(data.results);
-          console.log(data.results);
+          // console.log(data.results);
           // Suponiendo que 'data' es el objeto que has mostrado
           const users = data.results; // Obtener el array de resultados de usuarios
 
@@ -248,7 +248,7 @@ const Dashboard = () => {
             const roles = user.authorization?.xbpwd96n?.roles;
 
             if (roles) {
-              console.log("Roles del usuario founded");
+              // console.log("Roles del usuario founded");
             } else {
               console.log("No se encontraron roles para el usuario");
             }
@@ -402,7 +402,7 @@ const Dashboard = () => {
                       onClick={() => handleUserSelect(user)}>
                       Edit
                     </AlertDialogTrigger>
-                    <AlertDialogContent className="bg-zinc-400 border rounded-md max-h-[700px]  max-w-[600px]  overflow-y-auto">
+                    <AlertDialogContent className="bg-slate-400 border rounded-md max-h-[700px]  max-w-[600px] overflow-y-auto">
                       <AlertDialogHeader className=" text-black">
                         <AlertDialogTitle className=" text-black">
                           Edit Form
@@ -525,7 +525,7 @@ const Dashboard = () => {
                                   defaultValue={
                                     user.authorization?.xbpwd96n?.roles.join(
                                       ", "
-                                    ) || "No roles"
+                                    ) 
                                   } // Seleccionar el primer valor del array
                                 >
                                   <FormControl>
@@ -548,13 +548,12 @@ const Dashboard = () => {
                             )}
                           />
                         </div>
+
                         <AlertDialogFooter className="mt-7 gap-4">
                           <AlertDialogCancel className="bg-white text-black">
                             Cancel
                           </AlertDialogCancel>
-                          <AlertDialogAction>
-                            <Button type="submit">Submit</Button>
-                          </AlertDialogAction>
+                          <Button type="submit">Submit</Button>
                         </AlertDialogFooter>
                       </form>
                     </AlertDialogContent>

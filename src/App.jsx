@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Route,
-  NavLink,
-  Routes,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Userfront from "@userfront/toolkit/react";
 import "./App.css";
 import Dashboard from "./components/Dashboard";
@@ -15,6 +10,7 @@ import Layout from "./components/Layout";
 import Profile from "./components/Profile";
 import Post from "./components/Post";
 import Posts from "./components/Posts";
+import Inactive from "./components/Inactive";
 
 Userfront.init("xbpwd96n");
 
@@ -22,65 +18,6 @@ function App() {
   return (
     <Router>
       <Layout>
-        {/* <nav className="bg-gray-800 p-4">
-          <ul className="flex flex-col md:flex-row justify-center md:justify-end space-y-2 md:space-y-0 md:space-x-4">
-            <li>
-              <NavLink
-                to="/dashboard"
-                className="text-white hover:text-gray-300"
-                activeclassname="text-blue-500" // Cambio activeClassName aquí
-              >
-                Dashboard
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/"
-                className="text-white hover:text-gray-300"
-                activeclassname="text-blue-500" // Cambio activeClassName aquí
-                exact // Cambio aquí
-              >
-                Home
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/login"
-                className="text-white hover:text-gray-300"
-                activeclassname="text-blue-500" // Cambio activeClassName aquí
-              >
-                Login
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/register"
-                className="text-white hover:text-gray-300"
-                activeclassname="text-blue-500" // Cambio activeClassName aquí
-              >
-                Register
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/reset"
-                className="text-white hover:text-gray-300"
-                activeclassname="text-blue-500" // Cambio activeClassName aquí
-              >
-                Pass-forget
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/posts"
-                className="text-white hover:text-gray-300"
-                activeclassname="text-blue-500" // Cambio activeClassName aquí
-              >
-                Pass-forget
-              </NavLink>
-            </li>
-          </ul>
-        </nav> */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -90,6 +27,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/post" element={<Post />} />
           <Route path="/posts" element={<Posts />} />
+          <Route path="/inactive" element={<Inactive />} />
         </Routes>
       </Layout>
     </Router>

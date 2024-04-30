@@ -90,7 +90,7 @@ const Profile = () => {
       if (file) {
         // Sube el archivo y obtén el fullPath
         const fullPath = await uploadFile(file);
-        console.log(fullPath);
+        // console.log(fullPath);
         // Actualiza el estado del formulario con el nuevo fullPath
         form.setValue("image", fullPath);
         // Agrega el fullPath al objeto data
@@ -142,7 +142,7 @@ const Profile = () => {
         const userData = JSON.parse(
           atob(Userfront.accessToken().split(".")[1])
         );
-        console.log(userData.image);
+        //  console.log(userData.image);
         const userId = userData.userId;
 
         const response = await fetch(
@@ -162,7 +162,7 @@ const Profile = () => {
         }
 
         const result = await response.json();
-        console.log(result);
+        // console.log(result);
         // Actualiza el estado userData con los datos del usuario
         setUserData(result);
       } catch (error) {

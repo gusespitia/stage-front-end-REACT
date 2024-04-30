@@ -17,6 +17,7 @@ import {
 const Sidebar = () => {
   const [userData, setUserData] = useState(null);
   const [userRole, setUserRole] = useState("");
+  const [userStatus, setUserStatus] = useState("");
   const navigate = useNavigate();
   // Definir el rol del usuario
 
@@ -51,21 +52,15 @@ const Sidebar = () => {
         if (response.ok) {
           const data = await response.json();
           setUserData(data);
-          console.log(data);
-          // Suponiendo que 'data' es el objeto que has mostrado
-
-          // Iterar sobre cada usuario
-
-          // Acceder a los roles del usuario
+          console.log(data.locked);
+          setUserStatus(data.locked);
           const roles = data.authorization?.xbpwd96n?.roles;
           setUserRole(roles[0]);
-          console.log(userRole);
           if (roles) {
-            console.log("Roles del usuario founded");
+            //console.log("Roles del usuario founded");
           } else {
             console.log("No se encontraron roles para el usuario");
           }
-
           // Aquí puedes manejar los datos recibidos, como establecer el estado o realizar otras operaciones
         } else {
           console.error(
@@ -83,17 +78,20 @@ const Sidebar = () => {
 
   const menuList = [
     {
-      group: "General",
+      group: "Pages",
       items: [
-        { to: "/profile", icon: <User />, text: "Profile" },
-        // Verificar si el usuario NO tiene el rol de "teacher"
-        !userRole || userRole !== "student" // Si userRole no está definido o no es "teacher"
+        // Verificar si userStatus es true (user.locked)
+        userStatus === true
+          ? [{ to: "/inactive", icon: <StickyNote />, text: "Status" }]
+          : // Verificar si el usuario NO tiene el rol de "student"
+          !userRole || userRole !== "student"
           ? [
               { to: "/dashboard", icon: <Users />, text: "Dashboard" },
               { to: "/posts", icon: <StickyNote />, text: "Posts" },
-            ] // Si userRole está definido y es "teacher"
-          : [],
-        { to: "/post", icon: <StickyNote />, text: "Post" },
+              { to: "/post", icon: <StickyNote />, text: "Post" },
+              { to: "/profile", icon: <User />, text: "Profile" },
+            ]
+          : [], // Si el usuario tiene el rol de "student", no mostramos ninguna otra ruta
       ].flat(), // Utilizamos flat para aplanar el array
     },
   ];
@@ -106,7 +104,7 @@ const Sidebar = () => {
             <img
               src={userData.image}
               className="border max-w-16 bg-emerald-500 p-0.5 mb-3 rounded-lg"
-              alt={"Avatar of the user: "+ userData.name}
+              alt={"Avatar of the user: " + userData.name}
             />
             <div>
               <p className="font-bold text-[16px]">Hello {userData.name}!</p>
@@ -118,16 +116,20 @@ const Sidebar = () => {
       <Command>
         <CommandList>
           {menuList.map((menu, key) => (
-            <CommandGroup key={key} heading={menu.group}>
+            <CommandGroup key={key}>
               {menu.items.map((item, itemKey) => (
                 <div key={itemKey}>
-                  <div className="flex gap-5 py-1 hover:translate-x-1 hover:text-primary hover:text-blue-900 font-medium">
+                  <div className="flex gap-5 py-1">
                     {item.icon}
-                    <li className="list-none hover:translate-x-1 hover:text-primary hover:text-blue-900 font-medium">
+                    <li className="list-none hover:translate-x-1  hover:text-blue-900 font-medium">
                       <NavLink
                         to={item.to}
-                        exact="true"
-                        activeclassname="text-blue-500">
+                        exact={item.toString()}
+                        className={({ isActive }) =>
+                          isActive
+                            ? "text-lime-600 font-bold hover:translate-x-1 hover:text-blue-900"
+                            : "text-black font-semibold hover:translate-x-1 hover:text-blue-900"
+                        }>
                         {item.text}
                       </NavLink>
                     </li>
