@@ -3,6 +3,12 @@ import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import {
   Select,
@@ -43,15 +49,36 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { toast } from "@/components/ui/use-toast";
 // import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
+const FormSchema2 = z.object({
+  locked: z.boolean().default("false").optional(),
+});
 const Dashboard = () => {
   const [usersData, setUsersData] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false); // Nuevo estado para la confirmación de eliminación
+  const [estado, setEstado] = useState(false);
+  const formulario = useForm({
+    resolver: zodResolver(FormSchema2),
+    defaultValues: {
+      locked: false,
+    },
+  });
 
+  const onSubmit2 = (data) => {
+    console.log("Form data:", data);
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+  };
   const formSchema = z.object({
     name: z.string().min(2, {
       message: "Name must be at least 2 characters.",
@@ -141,6 +168,7 @@ const Dashboard = () => {
 
       if (response.ok) {
         console.log(`User role updated successfully to ${roles}`);
+        window.location.reload();
         // Puedes mostrar un mensaje de éxito si lo deseas
       } else {
         const errorData = await response.json();
@@ -262,7 +290,7 @@ const Dashboard = () => {
       if (response.ok) {
         console.log("User deleted successfully");
         setDeleteConfirmation(true);
-        window.location.href = "/dashboard"; // Redirige a la página de dashboard
+        window.location.reload();
         return true; // Indica que la eliminación del usuario fue exitosa
       } else {
         console.error("Failed to delete user");
@@ -292,13 +320,16 @@ const Dashboard = () => {
       // Puedes mostrar un mensaje de error si la eliminación del usuario falló debido a un error
     }
   };
-
+  const handleSwitchChange = (newValue) => {
+    setEstado(newValue);
+    formulario.handleSubmit(onSubmit2)();
+  };
   return (
     <>
       <FormProvider {...form}>
         <Table>
           <TableCaption className="p-0 text-xl m-0">
-            <div className="h-6 text-center bg-slate-400 w-full m-0 p-0">
+            <div className="h-6 text-center bg-slate-100 w-full m-0 p-0">
               {successMessage && (
                 <p className="text-green-600">{successMessage}</p>
               )}
@@ -307,23 +338,29 @@ const Dashboard = () => {
           </TableCaption>
 
           <TableHeader>
-            <TableRow className="bg-slate-400 text-black">
-              <TableHead className="text-black">Id</TableHead>
-              <TableHead className="text-black">Name</TableHead>
-              <TableHead className="text-black">Username</TableHead>
-              <TableHead className="text-black">Email</TableHead>
-              <TableHead className="text-black">Image</TableHead>
-              <TableHead className="text-black">Phone</TableHead>
-              <TableHead className="text-black">Status</TableHead>
-              <TableHead className="text-black">Roles</TableHead>
-              <TableHead className="text-black">Actions</TableHead>
-              <TableHead className="text-black">Actions</TableHead>
+            <TableRow className="bg-neutral-600 hover:bg-neutral-500">
+              <TableHead className="item-table">Id</TableHead>
+              <TableHead className="item-table">Name</TableHead>
+              <TableHead className="item-table">Username</TableHead>
+              <TableHead className="item-table">Email</TableHead>
+              <TableHead className="item-table">Image</TableHead>
+              <TableHead className="item-table">Phone</TableHead>
+              <TableHead className="item-table">Status</TableHead>
+              <TableHead className="item-table">Roles</TableHead>
+              <TableHead className="item-table">Actions</TableHead>
+              <TableHead className="item-table">Actions</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {usersData.map((user, key) => (
-              <TableRow key={key}>
+            {usersData.map((user, index) => (
+              <TableRow
+                key={index}
+                className={
+                  index % 2 !== 0
+                    ? "hover:translate-x-1 hover:text-blue-900 hover:font-medium"
+                    : "bg-gray-300 hover:translate-x-1 hover:text-blue-900 hover:font-medium"
+                }>
                 <TableCell className="font-medium">{user.userId}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.username}</TableCell>
@@ -335,14 +372,23 @@ const Dashboard = () => {
                 <TableCell>
                   {" "}
                   {user.locked ? (
-                    0
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>Active</TooltipTrigger>
+                        <TooltipContent>
+                          <p>Active</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   ) : (
-                    <Switch
-                      checked={user.value}
-                      onCheckedChange={(checked) => handleChangeLocked(checked)}
-                      enable
-                      aria-readonly
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>Inactive</TooltipTrigger>
+                        <TooltipContent>
+                          <p>Inactive</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   )}{" "}
                 </TableCell>
                 <TableCell>
@@ -352,26 +398,24 @@ const Dashboard = () => {
                 <TableCell>
                   <AlertDialog>
                     <AlertDialogTrigger
-                      className="bg-blue-800 px-4 py-2 border rounded-md text-white"
+                      className="px-4 py-2 border rounded-md text-white bg-blue-700"
                       onClick={() => handleUserSelect(user)}>
                       Edit
                     </AlertDialogTrigger>
-                    <AlertDialogContent
-                      className="bg-slate-600"
-                      style={{ maxHeight: "700px", overflowY: "auto" }}>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle className="">
+                    <AlertDialogContent className="bg-zinc-400 border rounded-md max-h-[700px]  max-w-[600px]  overflow-y-auto">
+                      <AlertDialogHeader className=" text-black">
+                        <AlertDialogTitle className=" text-black">
                           Edit Form
                         </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action will edit the data of the following user:{" "}
-                          {user.name}
+                        <AlertDialogDescription className=" text-black text-md">
+                          This action will edit the data of the user:{" "}
+                          <strong> {user.name}</strong>
                         </AlertDialogDescription>
                       </AlertDialogHeader>
 
                       <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        className="w-2/3 space-y-3">
+                        className="max-w-[500px]">
                         <FormField
                           control={form.control}
                           name="name"
@@ -438,27 +482,36 @@ const Dashboard = () => {
                             </FormItem>
                           )}
                         />
-                        <FormField
-                          control={form.control}
-                          name="locked"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Locked</FormLabel>
-                              <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={(checked) =>
-                                    handleChangeLocked(checked)
-                                  }
-                                  enable
-                                  aria-readonly
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <div className="flex gap-8">
+                        <div className="flex gap-8 mt-3">
+                          <FormField
+                            onSubmit={formulario.handleSubmit(onSubmit2)}
+                            control={form.control}
+                            name="locked"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="flex justify-around first:mb-4">
+                                  Status
+                                </FormLabel>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={(newValue) => {
+                                      field.onChange(newValue);
+                                      handleSwitchChange(newValue);
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <button
+                            className="hidden"
+                            type="submit"
+                            disabled={!estado}>
+                            Submit
+                          </button>
+
                           <FormField
                             control={form.control}
                             name="roles"
@@ -494,31 +547,16 @@ const Dashboard = () => {
                               </FormItem>
                             )}
                           />
-                          {/* <FormField
-                            control={form.control}
-                            name="locked"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Locked</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    defaultValue="1"
-                                    onChange={field.onChange}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          /> */}
                         </div>
-
-                        <Button type="submit">Submit</Button>
+                        <AlertDialogFooter className="mt-7 gap-4">
+                          <AlertDialogCancel className="bg-white text-black">
+                            Cancel
+                          </AlertDialogCancel>
+                          <AlertDialogAction>
+                            <Button type="submit">Submit</Button>
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
                       </form>
-
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction>Continue</AlertDialogAction>
-                      </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
                 </TableCell>
@@ -559,7 +597,6 @@ const Dashboard = () => {
           </TableBody>
         </Table>
       </FormProvider>
-
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
     </>
   );

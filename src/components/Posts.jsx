@@ -105,73 +105,71 @@ const Post = () => {
   return (
     <>
       <div className="mx-24 mt-1">
-        <Separator />
         {userData?.map((user, index) => (
-          <div
-            key={index}
-            className="p-2 border rounded-[10px] my-4 pt-3 shadow-md bg-blue-300">
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-1" className="p-2 w-full">
-                <AccordionTrigger className="grid">
-                  <img
-                    src={user.image}
-                    className="rounded-md min-h-10 min-w-10 max-w-20 bg-emerald-500 p-1 mb-3"
-                    alt="picture avatar user"
-                  />
-                  <p className="font-bold text-[16px] ">
-                    Posted by: {user.name ? user.name : user.username}!
-                  </p>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div>
+          <div key={index}>
+            <section className="bg-slate-200 p-2 border pb-1 rounded-sm mt-2">
+              <Accordion type="single" collapsible>
+                <AccordionItem value="item-1" className="p-2 w-full">
+                  <AccordionTrigger className="grid">
+                    <img
+                      src={user.image}
+                      className="rounded-md min-h-10 min-w-10 max-w-20 bg-emerald-500 p-1 mb-3"
+                      alt="picture avatar user"
+                    />
+                    <p className="font-bold text-[16px] ">
+                      Posted by: {user.name ? user.name : user.username}!
+                    </p>
+                  </AccordionTrigger>
+                  <AccordionContent>
                     <div>
-                      {posts.map(
-                        (post) =>
-                          // Coloca la condición fuera del map de posts
-                          user.userId &&
-                          post.user_id === user.userId && (
-                            <div
-                              key={post.id}
-                              className="px-3 border rounded-2xl py-4 mt-4 mb-2 w-[600px] shadow-md bg-white">
-                              <ul className="grid grid-cols-2 grid-cols-custom gap-y-2">
-                                <Label className="col-start-1">Title:</Label>
-                                <li className="text-[14px] text-neutral-500] col-start-2">
-                                  {post.title}
-                                </li>
-                                <Label className="col-start-1">Data:</Label>
-                                <div className="text-[14px] text-neutral-500] col-start-2">
-                                  <div
-                                    dangerouslySetInnerHTML={{
-                                      __html: post.data,
-                                    }}
-                                  />
-                                </div>
-                                <Separator className="mt-3 col-span-2" />
-                                <li className="text-xs text-neutral-800 col-start-1 col-span-2">
-                                  <Label className="col-start-1 text-neutral-800">
-                                    Posted:
-                                  </Label>
-                                  {new Date(post.created_at).toLocaleDateString(
-                                    "en-EN",
-                                    {
+                      <div>
+                        {posts.map(
+                          (post) =>
+                            // Coloca la condición fuera del map de posts
+                            user.userId &&
+                            post.user_id === user.userId && (
+                              <div
+                                key={post.id}
+                                className="px-3 border rounded-2xl py-4 mt-4 mb-2 w-[600px] shadow-md bg-white">
+                                <ul className="grid grid-cols-2 grid-cols-custom gap-y-2">
+                                  <Label className="col-start-1">Title:</Label>
+                                  <li className="text-[14px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
+                                    {post.title}
+                                  </li>
+                                  <Label className="col-start-1">Data:</Label>
+                                  <div className="text-[14px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
+                                    <div
+                                      dangerouslySetInnerHTML={{
+                                        __html: post.data,
+                                      }}
+                                    />
+                                  </div>
+                                  <Separator className="mt-3 col-span-2" />
+                                  <li className="text-xs text-neutral-800 col-start-1 col-span-2">
+                                    <Label className="col-start-1 text-neutral-800 ">
+                                      Posted:
+                                    </Label>
+                                    <br />
+                                    {new Date(
+                                      post.created_at
+                                    ).toLocaleDateString("en-EN", {
                                       year: "numeric",
                                       month: "short",
                                       day: "numeric",
                                       minute: "numeric",
                                       second: "numeric",
-                                    }
-                                  )}
-                                </li>
-                              </ul>
-                            </div>
-                          )
-                      )}
+                                    })}
+                                  </li>
+                                </ul>
+                              </div>
+                            )
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  Yes. It adheres to the WAI-ARIA design pattern.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </section>
           </div>
         ))}
       </div>

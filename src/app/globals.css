@@ -74,3 +74,15 @@
     @apply bg-background text-foreground;
   }
 }
+.item-table {
+  color: white;
+  font-weight: bolder;
+  &:hover{
+    color: black;
+    background-color: darkgrey;
+  }
+}
+
+.grid-cols-custom {
+  grid-template-columns: 45px 1fr; /* Primera columna de 100px, segunda columna ocupa el espacio restante */
+}

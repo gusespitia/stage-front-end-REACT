@@ -190,7 +190,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="mx-40 max-w-screen-xl my-2 bg-slate-300 border rounded-xl p-0">
+    <div className="mx-40 max-w-screen-xl my-2 bg-slate-300 border rounded-xl p-6 ">
       <div className="w-full">
         {message && <Progress value={progress} className="bg-green-600 scr" />}
         {userData && (
