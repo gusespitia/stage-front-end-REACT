@@ -129,7 +129,7 @@ const Post = () => {
         throw new Error("Failed to send data");
       }
 
-      window.location.reload();
+      window.location.href = "/gus";
     } catch (error) {
       console.error("Error sending data:", error);
     }
@@ -173,7 +173,7 @@ const Post = () => {
     fetchData();
   }, []);
   return (
-    <div className="px-24">
+    <div className="px-24 mt-28">
       {userData && (
         <section className="bg-slate-200 p-2 border pb-10 rounded-sm mt-2">
           {" "}

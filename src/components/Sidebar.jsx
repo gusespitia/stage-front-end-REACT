@@ -2,10 +2,9 @@ import { User } from "lucide-react";
 import { Users } from "lucide-react";
 import { StickyNote } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { LogoutButton } from "@userfront/toolkit/react";
+import Userfront, { LogoutButton } from "@userfront/toolkit/react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Userfront from "@userfront/toolkit/react";
 
 import {
   Command,
@@ -52,7 +51,7 @@ const Sidebar = () => {
         if (response.ok) {
           const data = await response.json();
           setUserData(data);
-          console.log(data.locked);
+          // console.log(data.locked);
           setUserStatus(data.locked);
           const roles = data.authorization?.xbpwd96n?.roles;
           setUserRole(roles[0]);
@@ -84,79 +83,99 @@ const Sidebar = () => {
         userStatus === true
           ? [{ to: "/inactive", icon: <StickyNote />, text: "Status" }]
           : // Verificar si el usuario NO tiene el rol de "student"
-          !userRole || userRole !== "student"
+          !userRole || userRole == "student"
           ? [
+              { to: "/post", icon: <StickyNote />, text: "Post" },
+              { to: "/profile", icon: <User />, text: "Profile" },
+            ]
+          : [
               { to: "/dashboard", icon: <Users />, text: "Dashboard" },
               { to: "/posts", icon: <StickyNote />, text: "Posts" },
               { to: "/post", icon: <StickyNote />, text: "Post" },
               { to: "/profile", icon: <User />, text: "Profile" },
-            ]
-          : [], // Si el usuario tiene el rol de "student", no mostramos ninguna otra ruta
+            ], // Si el usuario tiene el rol de "student", no mostramos ninguna otra ruta
       ].flat(), // Utilizamos flat para aplanar el array
     },
   ];
 
+  // Función para recargar la página cuando se hace clic en el botón de logout
+  const handleLogout = () => {
+    Userfront.logout();
+    window.location.reload();
+    console.log("hola");
+  };
+
   return (
-    <div className="fixed flex flex-col gap-4 w-[260px] min-w-[250px] border-r min-h-screen p-2 bg-white">
+    <div className="fixed flex flex-col gap-4 w-[260px] min-w-[250px] border-r min-h-screen p-2 bg-white mt-20">
       <div>
         {userData && (
-          <div className="flex items-center gap-4 justify-start p-2 border rounded-[8px] ">
-            <img
-              src={userData.image}
-              className="border max-w-16 bg-emerald-500 p-0.5 mb-3 rounded-lg"
-              alt={"Avatar of the user: " + userData.name}
-            />
-            <div>
-              <p className="font-bold text-[16px]">Hello {userData.name}!</p>
-              <p className="text-[13px] text-neutral-500]">{userData.email}</p>
+          <div>
+            <div className="flex items-center gap-4 justify-start p-2 border rounded-[8px] ">
+              <img
+                src={userData.image}
+                className="border max-w-16 bg-emerald-500 p-0.5 mb-3 rounded-lg"
+                alt={"Avatar of the user: " + userData.name}
+              />
+              <div>
+                <p className="font-bold text-[16px]">Hello {userData.name}!</p>
+                <p className="text-[13px] text-neutral-500]">
+                  {userData.email}
+                </p>
+              </div>
+            </div>
+
+            <Command>
+              <CommandList>
+                {menuList.map((menu, key) => (
+                  <CommandGroup key={key}>
+                    {menu.items.map((item, itemKey) => (
+                      <div key={itemKey}>
+                        <div className="flex gap-5 py-1">
+                          {item.icon}
+                          <li className="list-none hover:translate-x-1  hover:text-blue-900 font-medium">
+                            <NavLink
+                              to={item.to}
+                              exact={item.toString()}
+                              className={({ isActive }) =>
+                                isActive
+                                  ? "text-lime-600 font-bold hover:translate-x-1 hover:text-blue-900"
+                                  : "text-black font-semibold hover:translate-x-1 hover:text-blue-900"
+                              }>
+                              {item.text}
+                            </NavLink>
+                          </li>
+                        </div>
+                      </div>
+                    ))}
+                  </CommandGroup>
+                ))}
+                <CommandSeparator />
+              </CommandList>
+            </Command>
+            <div className="w-20 mt-6 align-middle text-right">
+              <LogoutButton
+                theme={{
+                  colors: {
+                    light: "#ffffff",
+                    dark: "#5e72e4",
+                    accent: "#187cbf",
+                    lightBackground: "#fdfdfd",
+                    darkBackground: "#2d2d2d",
+                  },
+                  colorScheme: "auto",
+                  fontFamily: "Avenir, Helvetica, Arial, sans-serif",
+                  size: "compact",
+                  extras: {
+                    rounded: true,
+                    gradientButtons: true,
+                    hideSecuredMessage: false,
+                  },
+                }}
+                onSubmit={handleLogout} // Asigna la función de manejo de clics
+              />
             </div>
           </div>
         )}
-      </div>
-      <Command>
-        <CommandList>
-          {menuList.map((menu, key) => (
-            <CommandGroup key={key}>
-              {menu.items.map((item, itemKey) => (
-                <div key={itemKey}>
-                  <div className="flex gap-5 py-1">
-                    {item.icon}
-                    <li className="list-none hover:translate-x-1  hover:text-blue-900 font-medium">
-                      <NavLink
-                        to={item.to}
-                        exact={item.toString()}
-                        className={({ isActive }) =>
-                          isActive
-                            ? "text-lime-600 font-bold hover:translate-x-1 hover:text-blue-900"
-                            : "text-black font-semibold hover:translate-x-1 hover:text-blue-900"
-                        }>
-                        {item.text}
-                      </NavLink>
-                    </li>
-                  </div>
-                </div>
-              ))}
-            </CommandGroup>
-          ))}
-          <CommandSeparator />
-        </CommandList>
-      </Command>
-      <div className="w-20">
-        <LogoutButton
-          theme={{
-            colors: {
-              light: "#ffffff",
-              dark: "#5e72e4",
-              accent: "#13a0ff",
-              lightBackground: "#fdfdfd",
-              darkBackground: "#2d2d2d",
-            },
-            colorScheme: "auto",
-            fontFamily: "Avenir, Helvetica, Arial, sans-serif",
-            size: "compact",
-            extras: { rounded: true, hideSecuredMessage: false },
-          }}
-        />
       </div>
     </div>
   );

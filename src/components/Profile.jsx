@@ -78,14 +78,14 @@ const Profile = () => {
           setProgress(i);
         }, i * 40); // Ajusta el tiempo de cada incremento (en milisegundos)
       }
-    }, 3500); // 3 segundos de espera antes de iniciar el ciclo
+    }, 4000); // 3 segundos de espera antes de iniciar el ciclo
 
     return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonta
   }, []);
 
   const onSubmit = async (data) => {
     try {
-      // setShowProgress(true); // Mostrar la barra de progreso al enviar el formulario
+      setProgress(true); // Mostrar la barra de progreso al enviar el formulario
 
       if (file) {
         // Sube el archivo y obtén el fullPath
@@ -120,7 +120,7 @@ const Profile = () => {
           setIsAlertDialogOpen(false);
           // setIsAlertDialogOpen(true);
           setMessage("");
-          window.location.reload();
+          window.location.href = "/gus";
         }, 3600);
       } else {
         // Si la solicitud falla, muestra un mensaje de error
@@ -190,124 +190,129 @@ const Profile = () => {
   };
 
   return (
-    <div className="mx-40 max-w-screen-xl my-2 bg-slate-300 border rounded-xl p-6 ">
+    <div className="mx-40 max-w-screen-xl my-2 bg-slate-300 border rounded-xl p-6 mt-28 ">
       <div className="w-full">
         {message && <Progress value={progress} className="bg-green-600 scr" />}
         {userData && (
-          <div className="flex items-start gap-4 justify-start p-3 border rounded-[8px] px-20">
-            <img
-              src={userData.image}
-              className="rounded-md min-w-40 max-w-56 bg-emerald-500 p-1 mb-3"
-              alt="image of user"
-            />
-            <div>
-              <h2 className="font-bold">
-                Hello {userData.name.split(" ")[0]}!
-              </h2>
-
-              <Form {...form}>
-                <form
-                  ref={formRef} // Asigna la referencia al formulario
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="w-full space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Username</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="phoneNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="grid w-full max-w-sm items-center gap-1.5">
-                    <Label htmlFor="imagenPerfil">Picture</Label>
-                    <Input
-                      id="image"
-                      type="file"
-                      name="image"
-                      onChange={(e) => setFile(e.target.files[0])}
-                    />
-                  </div>
-                  <AlertDialog
-                    isOpen={isAlertDialogOpen}
-                    onClose={() => setIsAlertDialogOpen(false)}>
-                    <AlertDialogTrigger>
-                      {!message && (
-                        <button
-                          type="button"
-                          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
-                          Edit
-                        </button>
-                      )}
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete your account and remove your data from our
-                          servers.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleContinueAction()}>
-                          Continue
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </form>
-              </Form>
+          <section>
+            <div className="font-bold text-center text-lg mb-4">
+              <h1>
+                Hello <strong>{userData.name.split(" ")[0]}!</strong>
+                <br />
+              </h1>
+              <p> This is your personal data.</p>
             </div>
-          </div>
+
+            <div className="flex items-start gap-8  justify-start p-3 border rounded-[8px] px-20">
+              <img
+                src={userData.image}
+                className="rounded-md min-w-40 mt-8 max-w-56 bg-emerald-500 p-1 mb-3"
+                alt="image of user"
+              />
+              <div>
+                <Form {...form}>
+                  <form
+                    ref={formRef} // Asigna la referencia al formulario
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="w-full space-y-4 mt-8">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="phoneNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                      <Label htmlFor="imagenPerfil">Picture</Label>
+                      <Input
+                        id="image"
+                        type="file"
+                        name="image"
+                        onChange={(e) => setFile(e.target.files[0])}
+                      />
+                    </div>
+                    <AlertDialog
+                      isOpen={isAlertDialogOpen}
+                      onClose={() => setIsAlertDialogOpen(false)}>
+                      <AlertDialogTrigger>
+                        {!message && (
+                          <button
+                            type="button"
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+                            Edit
+                          </button>
+                        )}
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            edit your data from our servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleContinueAction()}>
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </form>
+                </Form>
+              </div>
+            </div>
+          </section>
         )}
       </div>
     </div>

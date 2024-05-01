@@ -1,6 +1,6 @@
+import Userfront, { SignupForm } from "@userfront/toolkit/react";
 
-import { SignupForm } from "@userfront/toolkit/react";
-
+Userfront.init("xbpwd96n");
 const Register = () => {
   const handleSubmit = async (formData) => {
     try {
@@ -50,14 +50,18 @@ const Register = () => {
           colors: {
             light: "#ffffff",
             dark: "#5e72e4",
-            accent: "#13a0ff",
+            accent: "#187cbf",
             lightBackground: "#fdfdfd",
             darkBackground: "#2d2d2d",
           },
-          colorScheme: "light",
+          colorScheme: "auto",
           fontFamily: "Avenir, Helvetica, Arial, sans-serif",
           size: "compact",
-          extras: { rounded: true, hideSecuredMessage: false },
+          extras: {
+            rounded: true,
+            gradientButtons: true,
+            hideSecuredMessage: false,
+          },
         }}
       />
     </div>

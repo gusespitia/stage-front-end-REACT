@@ -1,8 +1,7 @@
-import { PasswordResetForm} from "@userfront/toolkit/react";
+import { PasswordResetForm } from "@userfront/toolkit/react";
 
 const Reset = () => (
-  <div>
-    <h2>Reset</h2>
+  <div className="m-36">
     <PasswordResetForm
       theme={{
         colors: {
@@ -12,13 +11,12 @@ const Reset = () => (
           lightBackground: "#fdfdfd",
           darkBackground: "#2d2d2d",
         },
-        colorScheme: "light",
+        colorScheme: "auto",
         fontFamily: "Avenir, Helvetica, Arial, sans-serif",
         size: "compact",
         extras: { rounded: true, hideSecuredMessage: false },
       }}
     />
-    ; ;
   </div>
 );
 

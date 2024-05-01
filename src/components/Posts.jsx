@@ -17,6 +17,10 @@ const Post = () => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
+    if (!Userfront.accessToken()) {
+      navigate("/login");
+      return;
+    }
     const fetchData = async () => {
       try {
         const response = await fetch(
@@ -104,7 +108,7 @@ const Post = () => {
 
   return (
     <>
-      <div className="mx-24 mt-1">
+      <div className="mx-24 mt-28">
         {userData?.map((user, index) => (
           <div key={index}>
             <section className="bg-slate-200 p-2 border pb-1 rounded-sm mt-2">

@@ -52,7 +52,7 @@ const Inactive = () => {
     };
 
     fetchData();
-  }, []);
+  }, [navigate]);
 
   // Render the sidebar
   return (

@@ -3,6 +3,9 @@ import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import Userfront from "@userfront/toolkit/react";
+import { useNavigate } from "react-router-dom";
+
 import {
   Tooltip,
   TooltipContent,
@@ -61,6 +64,7 @@ const Dashboard = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false); // Nuevo estado para la confirmación de eliminación
   const [estado, setEstado] = useState(false);
+  const navigate = useNavigate();
   const formulario = useForm({
     resolver: zodResolver(FormSchema2),
     defaultValues: {
@@ -69,7 +73,7 @@ const Dashboard = () => {
   });
 
   const onSubmit2 = (data) => {
-    console.log("Form data:", data);
+    // console.log("Form data:", data);
     toast({
       title: "You submitted the following values:",
       description: (
@@ -120,13 +124,13 @@ const Dashboard = () => {
   const handleEditUser = async (formData) => {
     try {
       const { userId } = selectedUser;
-      console.log(userId);
+      // console.log(userId);
 
       // Crear una copia de formData y eliminar la propiedad 'roles'
       const formDataCopy = { ...formData };
       delete formDataCopy.roles;
 
-      console.log(formDataCopy);
+      // console.log(formDataCopy);
 
       const url = `https://back-end-knex-js.vercel.app/updateUser/${userId}`;
 
@@ -142,13 +146,13 @@ const Dashboard = () => {
         setSuccessMessage("User information updated successfully.");
         // Redirige a la página de inicio o a la página de dashboard
 
-        //  window.location.href = "/dashboard"; // Redirige a la página de dashboard
+        window.location.href = "/gus"; // Redirige a la página de dashboard
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message);
       }
     } catch (error) {
-      console.error("Error updating user information:", error);
+      // console.error("Error updating user information:", error);
       setErrorMessage("Error updating user information. Please try again.");
     }
   };
@@ -156,7 +160,7 @@ const Dashboard = () => {
   const handleUserRoleUpdate = async (userId, roles) => {
     try {
       const { userId } = selectedUser;
-      console.log(userId, roles);
+      // console.log(userId, roles);
       const url = `https://back-end-knex-js.vercel.app/updateUserRole/${userId}`;
       const response = await fetch(url, {
         method: "PUT",
@@ -167,8 +171,8 @@ const Dashboard = () => {
       });
 
       if (response.ok) {
-        console.log(`User role updated successfully to ${roles}`);
-        window.location.reload();
+        // console.log(`User role updated successfully to ${roles}`);
+        window.location.href = "/gus";
         // Puedes mostrar un mensaje de éxito si lo deseas
       } else {
         const errorData = await response.json();
@@ -212,6 +216,10 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!Userfront.accessToken()) {
+          navigate("/login");
+          return;
+        }
         const response = await fetch(
           "https://api.userfront.com/v0/tenants/xbpwd96n/users/find",
           {
@@ -290,7 +298,7 @@ const Dashboard = () => {
       if (response.ok) {
         console.log("User deleted successfully");
         setDeleteConfirmation(true);
-        window.location.reload();
+        window.location.href = "/gus";
         return true; // Indica que la eliminación del usuario fue exitosa
       } else {
         console.error("Failed to delete user");
@@ -327,16 +335,7 @@ const Dashboard = () => {
   return (
     <>
       <FormProvider {...form}>
-        <Table>
-          <TableCaption className="p-0 text-xl m-0">
-            <div className="h-6 text-center bg-slate-100 w-full m-0 p-0">
-              {successMessage && (
-                <p className="text-green-600">{successMessage}</p>
-              )}
-            </div>
-            A list of all the users.
-          </TableCaption>
-
+        <Table className="text-center  mt-20 ">
           <TableHeader>
             <TableRow className="bg-neutral-600 hover:bg-neutral-500">
               <TableHead className="item-table">Id</TableHead>
@@ -351,7 +350,6 @@ const Dashboard = () => {
               <TableHead className="item-table">Actions</TableHead>
             </TableRow>
           </TableHeader>
-
           <TableBody>
             {usersData.map((user, index) => (
               <TableRow
@@ -522,11 +520,9 @@ const Dashboard = () => {
                                   onValueChange={(value) =>
                                     field.onChange([value])
                                   } // Convertir el valor a un array
-                                  defaultValue={
-                                    user.authorization?.xbpwd96n?.roles.join(
-                                      ", "
-                                    ) 
-                                  } // Seleccionar el primer valor del array
+                                  defaultValue={user.authorization?.xbpwd96n?.roles.join(
+                                    ", "
+                                  )} // Seleccionar el primer valor del array
                                 >
                                   <FormControl>
                                     <SelectTrigger>
@@ -548,13 +544,24 @@ const Dashboard = () => {
                             )}
                           />
                         </div>
-
-                        <AlertDialogFooter className="mt-7 gap-4">
-                          <AlertDialogCancel className="bg-white text-black">
-                            Cancel
-                          </AlertDialogCancel>
-                          <Button type="submit">Submit</Button>
-                        </AlertDialogFooter>
+                        {/* <div className="h-6 text-center bg-black w-full mt-24 p-4"> */}
+                        {successMessage ? (
+                          <div>
+                            <p className="text-green-600">{successMessage}</p>
+                            <AlertDialogFooter className="mt-7 gap-4">
+                              <AlertDialogAction>Exit</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </div>
+                        ) : (
+                          <div>
+                            <AlertDialogFooter className="mt-7 gap-4">
+                              <AlertDialogCancel className="bg-white text-black">
+                                Cancel
+                              </AlertDialogCancel>
+                              <Button type="submit">Submit</Button>
+                            </AlertDialogFooter>
+                          </div>
+                        )}
                       </form>
                     </AlertDialogContent>
                   </AlertDialog>

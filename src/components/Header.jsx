@@ -10,10 +10,10 @@ const Header = () => {
     const fetchData = async () => {
       try {
         // Verificar si el usuario está autenticado
-        if (!Userfront.accessToken()) {
-          navigate("/login");
-          return;
-        }
+        // if (!Userfront.accessToken()) {
+        //   navigate("/login");
+        //   return;
+        // }
 
         // Obtener el userId del token de acceso
         const userData = JSON.parse(
@@ -46,13 +46,17 @@ const Header = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [navigate]);
   return (
-    <div className="border-b p-2 text-center text-lg  bg-gray-900 text-white sticky top-0 z-50">
-      <h1>
-        You are using this platform as a <strong>{userData}!</strong>
-      </h1>
-    </div>
+    <section>
+      {/* {userData && (
+        <div className="border-b p-2 text-center text-lg  bg-gray-900 text-white sticky top-0 z-50">
+          <h1>
+            You are using this platform as a <strong>{userData}!</strong>
+          </h1>
+        </div>
+      )} */}
+    </section>
   );
 };
 export default Header;
