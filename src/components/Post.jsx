@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Editor from "react-simple-wysiwyg";
 import { Button } from "@/components/ui/button";
-
+import Footer from "./Footer";
 const Post = () => {
   const [userData, setUserData] = useState(null);
   const [postData, setPostData] = useState("");
@@ -173,95 +173,105 @@ const Post = () => {
     fetchData();
   }, []);
   return (
-    <div className="px-24 mt-28">
-      {userData && (
-        <section className="bg-slate-200 p-2 border pb-10 rounded-sm mt-2">
-          {" "}
-          <h1 className="text-3xl font-bold m-4 text-center">
-            Here you can post your thoughts
-          </h1>
-          <div className="flex items-start justify-center gap-1 ">
-            <div>
-              <img
-                src={userData.image}
-                className="min-h-10 min-w-10 max-w-[120px] bg-emerald-500 p-1 mb-3"
-                alt={"Avatar of the user: " + userData.name}
-              />
-              <p className="font-bold text-[16px] ">Hello {userData.name}!</p>
+    <section className="mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-18 sm:mb-6 overflow-x-auto xs:ml-9 sm:ml-12  ">
+      <div className="border rounded-md xs:mt-4 xs:p-4">
+        <h1 className="text-[20px] font-bold m-4 text-center sm:mb-8 sm:mx-auto xs:my-1">
+          Here you can see all your posts !
+        </h1>
+        {userData && (
+          <section className="flex justify-evenly items-start xs:gap-2 xs:flex-col md:flex-row">
+            <div className="mx-8">
+              <div className="justify-center items-center w-[180px] xs:w-[160px] xs:pt-2 h-auto shadow-md mx-1 p-1 bg-white border rounded-md xs:mx-auto xs:my-1 md:w-[190px]">
+                <p className="text-[17px] font-semibold text-center xs:text-[14px] ">
+                  Hello {userData.name}!
+                </p>
+                <img
+                  src={userData.image}
+                  className="object-fit w-full h-auto border rounded-md mb-2 xs:mt-2 "
+                  alt={"Avatar of the user: " + userData.name}
+                />
+              </div>
             </div>
-            <div>
-              <div>
-                <div className="grid w-full max-w-sm gap-1.5">
-                  <form onSubmit={handleSubmit} className="mx-24 mt-5">
-                    <Label htmlFor="title">Title</Label>
-                    <Input
-                      type="text"
-                      id="title"
-                      placeholder="Enter your post title"
-                      name="title"
-                      value={postTitle}
-                      onChange={(event) => setPostTitle(event.target.value)}
-                    />
-                    {titleError && <p className="text-red-500">{titleError}</p>}
-                    <Label htmlFor="data">Data</Label>
-                    <Editor
-                      value={postData}
-                      onChange={(event) => setPostData(event.target.value)}
-                      containerProps={{
-                        style: { resize: "vertical", background: "white" },
+
+            <div className="grid sm:w-[560px] mx-8 md:w-full xs:mx-0 xs:w-full ">
+              <form
+                onSubmit={handleSubmit}
+                className="w-full px-1 mt-0 bg-white xs:px-5 border rounded-md xs:min-w-[250px] xs:max-w-[580px]  sm:min-w-[400px] sm:max-w-[540px]  sm:ml-2">
+                <Label className="text-[17px] font-semibold " htmlFor="title">
+                  Title:
+                </Label>
+                <Input
+                  className="mb-3"
+                  type="text"
+                  id="title"
+                  placeholder="Enter your post title"
+                  name="title"
+                  value={postTitle}
+                  onChange={(event) => setPostTitle(event.target.value)}
+                />
+
+                {titleError && <p className="text-red-500 ">{titleError}</p>}
+                <Label className="text-[17px] font-semibold" htmlFor="data">
+                  Your Post:
+                </Label>
+                <Editor
+                  value={postData}
+                  onChange={(event) => setPostData(event.target.value)}
+                  containerProps={{
+                    style: { resize: "vertical", background: "white" },
+                  }}
+                />
+                {dataError && <p className="text-red-500">{dataError}</p>}
+                <Separator />
+                <div className="text-right">
+                  <Button
+                    type="submit"
+                    className="my-6 bg-blue-700 hover:translate-x-1  hover:bg-blue-400 hover:font-semibold">
+                    Submit
+                  </Button>
+                </div>
+              </form>
+            </div>
+
+            {posts.map((post) => (
+              <div
+                key={post.id}
+                className="px-6 border rounded-2xl py-6 mt-4 mb-2 w-[600px] shadow-md bg-white flex ">
+                <ul className="grid grid-cols-2 grid-cols-custom gap-y-2 ">
+                  <Label className="col-start-1">Title:</Label>
+                  <li className="text-[16px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
+                    {post.title}
+                  </li>
+                  <Label className="col-start-1">Data:</Label>
+                  <div className="text-[15px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: post.data,
                       }}
                     />
-                    {dataError && <p className="text-red-500">{dataError}</p>}
-                    <Separator />
-                    <div className="text-right">
-                      <Button
-                        type="submit"
-                        className="my-6 bg-blue-700 hover:translate-x-1  hover:bg-blue-400 hover:font-semibold">
-                        Submit
-                      </Button>
-                    </div>
-                  </form>
-                </div>
+                  </div>
+                  <Separator className="mt-3 w-[550px]" />
+                  <li className="text-xs text-neutral-800 col-start-1 col-span-2">
+                    <Label className="col-start-1 text-neutral-800 ">
+                      Posted:
+                    </Label>
+                    <br />
+                    {new Date(post.created_at).toLocaleDateString("en-EN", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      minute: "numeric",
+                      second: "numeric",
+                    })}
+                  </li>
+                </ul>
               </div>
-              {posts.map((post) => (
-                <div
-                  key={post.id}
-                  className="px-6 border rounded-2xl py-6 mt-4 mb-2 w-[600px] shadow-md bg-white flex ">
-                  <ul className="grid grid-cols-2 grid-cols-custom gap-y-2 ">
-                    <Label className="col-start-1">Title:</Label>
-                    <li className="text-[16px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
-                      {post.title}
-                    </li>
-                    <Label className="col-start-1">Data:</Label>
-                    <div className="text-[15px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: post.data,
-                        }}
-                      />
-                    </div>
-                    <Separator className="mt-3 w-[550px]" />
-                    <li className="text-xs text-neutral-800 col-start-1 col-span-2">
-                      <Label className="col-start-1 text-neutral-800 ">
-                        Posted:
-                      </Label>
-                      <br />
-                      {new Date(post.created_at).toLocaleDateString("en-EN", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        minute: "numeric",
-                        second: "numeric",
-                      })}
-                    </li>
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-    </div>
+            ))}
+          </section>
+        )}
+        <Footer />
+      </div>
+    </section>
   );
 };
 

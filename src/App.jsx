@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Route,
-  NavLink,
-  Routes,
-} from "react-router-dom";
+import { HashRouter as Router, Route, NavLink, Routes } from "react-router-dom";
 import Userfront from "@userfront/toolkit/react";
 import "./App.css";
 import Dashboard from "./components/Dashboard";
@@ -17,6 +12,8 @@ import Posts from "./components/Posts";
 import Navbar from "./components/Navbar";
 import NotFound from "./components/NotFound";
 import Inactive from "./components/Inactive";
+import Home from "./components/Home";
+
 Userfront.init("xbpwd96n");
 
 function App() {
@@ -25,7 +22,8 @@ function App() {
       <Navbar />
       <Layout>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Profile />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -34,7 +32,7 @@ function App() {
           <Route path="/post" element={<Post />} />
           <Route path="/inactive" element={<Inactive />} />
           <Route path="/posts" element={<Posts />} />
-          <Route path="*" element={<NotFound />} />{" "}
+          <Route path="*" element={<NotFound />} />
           {/* Manejar rutas no encontradas */}
         </Routes>
       </Layout>

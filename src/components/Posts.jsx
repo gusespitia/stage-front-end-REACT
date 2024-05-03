@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Userfront from "@userfront/toolkit/react";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
+import Footer from "./Footer";
 import {
   Accordion,
   AccordionContent,
@@ -49,7 +50,7 @@ const Post = () => {
         if (response.ok) {
           const data = await response.json();
           setUserData(data.results);
-          console.log(data.results);
+          //console.log(data.results);
         } else {
           console.error(
             "Error en la respuesta de la solicitud:",
@@ -73,7 +74,7 @@ const Post = () => {
         throw new Error("Failed to fetch posts");
       }
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       return data;
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -97,7 +98,7 @@ const Post = () => {
           allPosts = [...allPosts, ...userPosts];
         }
         setPosts(allPosts);
-        console.log(allPosts);
+        // console.log(allPosts);
       } catch (error) {
         console.error("Error fetching user posts:", error);
       }
@@ -107,21 +108,29 @@ const Post = () => {
   }, [navigate, userData]);
 
   return (
-    <>
-      <div className="mx-24 mt-28">
+    <section className="mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-12 sm:mb-6 overflow-x-auto xs:ml-9 ">
+      <div className="border rounded-md xs:mt-4 xs:p-4">
+        <h1 className="text-[20px] font-bold m-4 text-center sm:mb-8 sm:mx-auto xs:my-1">
+          Here you can see all posts made by users!
+        </h1>
         {userData?.map((user, index) => (
           <div key={index}>
-            <section className="bg-slate-200 p-2 border pb-1 rounded-sm mt-2">
+            <section className="bg-white  border rounded-md p-1 mt-4 lg:mr-28 sm:mx-4">
               <Accordion type="single" collapsible>
                 <AccordionItem value="item-1" className="p-2 w-full">
                   <AccordionTrigger className="grid">
-                    <img
-                      src={user.image}
-                      className="rounded-md min-h-10 min-w-10 max-w-20 bg-emerald-500 p-1 mb-3"
-                      alt="picture avatar user"
-                    />
-                    <p className="font-bold text-[16px] ">
-                      Posted by: {user.name ? user.name : user.username}!
+                    <div className="justify-center items-center w-[80px] h-auto border rounded-md shadow-md sm:mb-2">
+                      <img
+                        src={user.image}
+                        className="object-fit w-full h-auto  "
+                        alt={"Avatar of the user: " + user.name}
+                      />
+                    </div>
+                    <p className="text-[16px] ">
+                      Posts by
+                      <strong className="ml-2">
+                        {user.name ? user.name : user.username}!
+                      </strong>
                     </p>
                   </AccordionTrigger>
                   <AccordionContent>
@@ -134,7 +143,7 @@ const Post = () => {
                             post.user_id === user.userId && (
                               <div
                                 key={post.id}
-                                className="px-3 border rounded-2xl py-4 mt-4 mb-2 w-[600px] shadow-md bg-white">
+                                className="px-3 border rounded-2xl py-4 mt-4 mb-2 shadow-md bg-white">
                                 <ul className="grid grid-cols-2 grid-cols-custom gap-y-2">
                                   <Label className="col-start-1">Title:</Label>
                                   <li className="text-[14px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
@@ -177,7 +186,8 @@ const Post = () => {
           </div>
         ))}
       </div>
-    </>
+      <Footer />
+    </section>
   );
 };
 

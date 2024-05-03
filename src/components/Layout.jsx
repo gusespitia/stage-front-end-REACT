@@ -1,16 +1,14 @@
 import Sidebar from "@/components/Sidebar";
 import "../app/globals.css";
-import Header from "./Header";
 
-// eslint-disable-next-line react/prop-types
+
 const Layout = ({ children }) => {
   return (
-    <div className={`flex items-start justify-between`}>
+    <div className={`flex items-start justify-between md:relative`}>
       <Sidebar />
       <main
         style={{ fontFamily: "'Inter', sans-serif" }}
-        className="w-full h-full pl-[260px] grid">
-        <Header />
+        className="w-full h-full md:pl-[60px] grid">  
         {children}
       </main>
     </div>

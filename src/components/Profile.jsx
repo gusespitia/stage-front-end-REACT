@@ -6,7 +6,7 @@ import { z } from "zod";
 import { Label } from "@/components/ui/label";
 import { uploadFile } from "../firebase/config";
 import { Progress } from "@/components/ui/progress";
-
+import Footer from "./Footer";
 import {
   Form,
   FormControl,
@@ -190,37 +190,49 @@ const Profile = () => {
   };
 
   return (
-    <div className="mx-40 max-w-screen-xl my-2 bg-slate-300 border rounded-xl p-6 mt-28 ">
-      <div className="w-full">
-        {message && <Progress value={progress} className="bg-green-600 scr" />}
+    <section className="mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-18 sm:mb-6 overflow-x-auto xs:ml-9">
+      <div>
+        {message && <Progress value={progress} className="bg-green-600" />}
         {userData && (
-          <section>
-            <div className="font-bold text-center text-lg mb-4">
-              <h1>
-                Hello <strong>{userData.name.split(" ")[0]}!</strong>
-                <br />
+          <section className="mb-2 sm:row-start-1 sm:col-span-2 mt-4 lg:mr-28 sm:mr-2 sm:shadow-sm border rounded-xl sm:p-0 sm:pb-2 ">
+            <div className="font-bold text-center mb-8 m-auto lg:px-8 sm:px-4 ">
+              <h1 className="text-[24px] font-bold m-4 text-center sm:mb-0 sm:mx-auto xs:my-1">
+                Hello
+                <span>
+                  <strong> {userData.name.split(" ")[0]}!</strong>
+                </span>
               </h1>
-              <p> This is your personal data.</p>
+              <br />
+              <p className="sm:text-[18px] md:text-base xs:text-[17px] text-justify xs:font-medium xs:px-4 md:px-2 md:text-[19px] lg:text-[21px]">
+                This section displays your personal information. You can also
+                modify your data and upload a photo for use as your public
+                profile picture.
+              </p>
             </div>
 
-            <div className="flex items-start gap-8  justify-start p-3 border rounded-[8px] px-20">
-              <img
-                src={userData.image}
-                className="rounded-md min-w-40 mt-8 max-w-56 bg-emerald-500 p-1 mb-3"
-                alt="image of user"
-              />
-              <div>
+            <div className="flex gap-20 justify-center items-start xs:gap-2 xs:flex-col md:mx-20 md:flex-col lg:flex-row sm:flex-col lg:mx-1">
+              <div className="justify-center items-center w-[180px] xs:w-[160px] xs:pt-2 h-auto shadow-md mx-1 p-1 bg-white border rounded-md xs:mx-auto xs:my-1 md:w-[190px] lg:min-w-[150px] ">
+                <p className="text-[17px] font-semibold  text-center xs:text-[14px] ">
+                  Your avatar
+                </p>
+                <img
+                  src={userData.image}
+                  className="object-fit w-full h-auto border rounded-md mb-2 "
+                  alt={"Avatar of the user: " + userData.name}
+                />
+              </div>
+              <div className="w-[340px] xs:w-[280px] xs:mx-auto md:max-w-[560px] md:min-w-[480px] lg:max-w-[560px] lg:min-w-[340px] ">
                 <Form {...form}>
                   <form
                     ref={formRef} // Asigna la referencia al formulario
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="w-full space-y-4 mt-8">
+                    className="w-full space-y-5">
                     <FormField
                       control={form.control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <Label>Name</Label>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -234,7 +246,7 @@ const Profile = () => {
                       name="username"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username</FormLabel>
+                          <Label>Username</Label>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -247,7 +259,7 @@ const Profile = () => {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <Label>Email</Label>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -260,7 +272,7 @@ const Profile = () => {
                       name="phoneNumber"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
+                          <Label>Phone Number</Label>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -284,7 +296,7 @@ const Profile = () => {
                         {!message && (
                           <button
                             type="button"
-                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 ">
                             Edit
                           </button>
                         )}
@@ -315,7 +327,9 @@ const Profile = () => {
           </section>
         )}
       </div>
-    </div>
+
+      <Footer />
+    </section>
   );
 };
 

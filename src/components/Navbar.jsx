@@ -1,7 +1,7 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import Userfront from "@userfront/toolkit/react";
 
+import Userfront from "@userfront/toolkit/react";
 function Navbar() {
   const [userData, setUserData] = useState(null);
   const [userRol, setUserRol] = useState(null);
@@ -55,82 +55,73 @@ function Navbar() {
   }, []);
 
   return (
-    <nav className="bg-gray-800 p-4 fixed w-full z-10">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <NavLink to="/login">
-              <img
-                className="h-14 w-auto"
-                src="./images/logo.png" // Ruta relativa desde la ubicación del componente
-                alt="Logo"
-              />
-            </NavLink>
-          </div>
-
-          {/* Responsive Menu Button */}
-
-          {/* <button
-              type="button"
-              className="text-white hover:text-gray-300 focus:outline-none focus:text-gray-300"
-              aria-label="Toggle menu">
-              <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current">
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm16 5H4v2h16v-2z"></path>
-              </svg>
-            </button> */}
-          {userRol && (
-            <div className="border-b p-2 text-center text-lg bg-gray-900 text-white sticky top-0 z-50">
-              <h1>You are using this platform as a {userRol} </h1>
+    <nav className="bg-gray-800 px-4 fixed w-full z-10 py-1 ">
+      <div className="flex justify-between ">
+        {/* Logo */}
+        <div className="flex-shrink-0 mr-10">
+          <NavLink to="/login" exact="true">
+            <img
+              className="h-14 w-auto"
+              src="./images/logo.png"
+              // src="../public\images\logo.png" // Ruta relativa desde la ubicación del componente
+              alt="Logo"
+            />
+          </NavLink>
+        </div>
+        {userRol && (
+          <section className="flex justify-end gap-20  w-full items-end">
+            <div className="border-b p-1 md:text-md sticky top-0 z-50 text-white md:p-4 xs:text-[13px] xs:border-none mr-0 md:text-base">
+              <h1>You are using this platform as a {userRol}!</h1>
             </div>
-          )}
+          </section>
+        )}
 
-          {/* Menu Items */}
-          <div className="hidden md:flex md:items-center md:space-x-4">
-            <ul className="flex space-x-4 gap-4">
-              {!userData && (
-                <>
-                  <li>
-                    <NavLink
-                      to="/login"
-                      exact
-                      className={({ isActive }) =>
+        {/* Menu Items */}
+        <div className="flex items-center justify-end space-x-4  ">
+          <ul className="flex space-x-4 gap-1">
+            {!userData && (
+              <>
+                <li>
+                  <NavLink
+                    to="/login"
+                    exact="true"
+                    className={
+                      ({ isActive }) =>
                         isActive
-                          ? "text-lime-600 font-bold hover:translate-x-1 hover:text-blue-900"
-                          : "text-white font-semibold hover:translate-x-1 hover:text-blue-900"
-                      }>
-                      Log In
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/register"
-                      className={({ isActive }) =>
+                          ? "text-lime-600 font-bold hover:translate-x-1 hover:text-blue-900 text-sm md:text-base" // Texto de 12px en dispositivos pequeños, base en otros tamaños
+                          : "text-white font-semibold hover:translate-x-1 hover:text-blue-900 text-sm md:text-base" // Texto de 12px en dispositivos pequeños, base en otros tamaños
+                    }>
+                    Home
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/register"
+                    exact="true"
+                    className={
+                      ({ isActive }) =>
                         isActive
-                          ? "text-lime-600 font-bold hover:translate-x-1 hover:text-blue-900"
-                          : "text-white font-semibold hover:translate-x-1 hover:text-blue-900"
-                      }>
-                      Register
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/reset"
-                      className={({ isActive }) =>
-                        isActive
-                          ? "text-lime-600 font-bold hover:translate-x-1 hover:text-blue-900"
-                          : "text-white font-semibold hover:translate-x-1 hover:text-blue-900"
-                      }>
-                      Reset Password
-                    </NavLink>
-                  </li>
-                </>
-              )}
-            </ul>
-          </div>
+                          ? "text-lime-600 font-bold hover:translate-x-1 hover:text-blue-900 text-sm md:text-base" // Texto de 12px en dispositivos pequeños, base en otros tamaños
+                          : "text-white font-semibold hover:translate-x-1 hover:text-blue-900 text-sm md:text-base" // Texto de 12px en dispositivos pequeños, base en otros tamaños
+                    }>
+                    Register
+                  </NavLink>
+                </li>
+                {/* <li>
+                  <NavLink
+                    to="/reset"
+                    exact="true"
+                    className={({ isActive }) =>
+                      isActive
+                      ? "text-lime-600 font-bold hover:translate-x-1 hover:text-blue-900 text-sm md:text-base" // Texto de 12px en dispositivos pequeños, base en otros tamaños
+                      : "text-white font-semibold hover:translate-x-1 hover:text-blue-900 text-sm md:text-base" // Texto de 12px en dispositivos pequeños, base en otros tamaños
+                }>
+                    Reset Password
+                  </NavLink>
+                </li> */}
+              </>
+            )}
+          </ul>
         </div>
       </div>
     </nav>

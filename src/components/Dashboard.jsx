@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import Userfront from "@userfront/toolkit/react";
 import { useNavigate } from "react-router-dom";
-
+import Footer from "./Footer";
 import {
   Tooltip,
   TooltipContent,
@@ -195,10 +195,10 @@ const Dashboard = () => {
     await handleUserRoleUpdate(userId, rolesToSend);
   };
 
-  const handleChangeLocked = (checked) => {
-    // Actualizar el valor de locked en el formulario cuando cambia el Switch
-    form.setValue("locked", !checked);
-  };
+  // const handleChangeLocked = (checked) => {
+  //   // Actualizar el valor de locked en el formulario cuando cambia el Switch
+  //   form.setValue("locked", !checked);
+  // };
 
   useEffect(() => {
     if (selectedUser) {
@@ -333,11 +333,11 @@ const Dashboard = () => {
     formulario.handleSubmit(onSubmit2)();
   };
   return (
-    <>
+    <section className="mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-18 sm:mb-6 overflow-x-auto xs:ml-9 ">
       <FormProvider {...form}>
-        <Table className="text-center  mt-20 ">
+        <Table className="text-center mt-1 w-full border-2 rounded-md">
           <TableHeader>
-            <TableRow className="bg-neutral-600 hover:bg-neutral-500">
+            <TableRow className="bg-neutral-800 hover:bg-neutral-500">
               <TableHead className="item-table">Id</TableHead>
               <TableHead className="item-table">Name</TableHead>
               <TableHead className="item-table">Username</TableHead>
@@ -357,7 +357,7 @@ const Dashboard = () => {
                 className={
                   index % 2 !== 0
                     ? "hover:translate-x-1 hover:text-blue-900 hover:font-medium"
-                    : "bg-gray-300 hover:translate-x-1 hover:text-blue-900 hover:font-medium"
+                    : "bg-gray-100 hover:translate-x-1 hover:text-blue-900 hover:font-medium"
                 }>
                 <TableCell className="font-medium">{user.userId}</TableCell>
                 <TableCell>{user.name}</TableCell>
@@ -604,7 +604,8 @@ const Dashboard = () => {
         </Table>
       </FormProvider>
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
-    </>
+      <Footer />
+    </section>
   );
 };
 

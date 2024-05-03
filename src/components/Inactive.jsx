@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Userfront from "@userfront/toolkit/react";
 import { LogoutButton } from "@userfront/toolkit/react";
-
+import Footer from "./Footer";
 const Inactive = () => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
@@ -85,6 +85,7 @@ const Inactive = () => {
           />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -1,10 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export const darkMode = ["class"];
 export const content = [
-  './pages/**/*.{ts,tsx,jsx}',
-  './components/**/*.{ts,tsx,jsx}',
-  './app/**/*.{ts,tsx,jsx}',
-  './src/**/*.{ts,tsx,jsx}',
+  "./pages/**/*.{ts,tsx,jsx}",
+  "./components/**/*.{ts,tsx,jsx}",
+  "./app/**/*.{ts,tsx,jsx}",
+  "./src/**/*.{ts,tsx,jsx}",
 ];
 export const prefix = "";
 export const theme = {
@@ -12,10 +12,26 @@ export const theme = {
     center: true,
     padding: "2rem",
     screens: {
-      "2xl": "1400px",
+      sm: "640px",
+      // => @media (min-width: 640px) { ... }
+
+      md: "768px",
+      // => @media (min-width: 768px) { ... }
+
+      lg: "1024px",
+      // => @media (min-width: 1024px) { ... }
+
+      xl: "1280px",
+      // => @media (min-width: 1280px) { ... }
+
+      "2xl": "1536px",
+      // => @media (min-width: 1536px) { ... }
     },
   },
   extend: {
+    screens: {
+      xs: "375px", // Teléfonos pequeños
+    },
     colors: {
       border: "hsl(var(--border))",
       input: "hsl(var(--input))",
@@ -55,6 +71,7 @@ export const theme = {
       lg: "var(--radius)",
       md: "calc(var(--radius) - 2px)",
       sm: "calc(var(--radius) - 4px)",
+      gm: "var(--radius)",
     },
     keyframes: {
       "accordion-down": {
@@ -71,5 +88,9 @@ export const theme = {
       "accordion-up": "accordion-up 0.2s ease-out",
     },
   },
+  plugins: [
+    require("@tailwindcss/forms"),
+    require("tailwindcss-animate"),
+    // ...
+  ],
 };
-export const plugins = [require("tailwindcss-animate")];

@@ -17,10 +17,12 @@ const Sidebar = () => {
   const [userData, setUserData] = useState(null);
   const [userRole, setUserRole] = useState("");
   const [userStatus, setUserStatus] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showMenuButton, setShowMenuButton] = useState(false); // Nuevo estado para controlar la visibilidad del botón de menú
   const navigate = useNavigate();
-  // Definir el rol del usuario
 
   useEffect(() => {
+    // Función para cargar los datos del usuario
     const fetchData = async () => {
       try {
         // Verificar si el usuario está autenticado
@@ -51,16 +53,9 @@ const Sidebar = () => {
         if (response.ok) {
           const data = await response.json();
           setUserData(data);
-          // console.log(data.locked);
           setUserStatus(data.locked);
           const roles = data.authorization?.xbpwd96n?.roles;
           setUserRole(roles[0]);
-          if (roles) {
-            //console.log("Roles del usuario founded");
-          } else {
-            console.log("No se encontraron roles para el usuario");
-          }
-          // Aquí puedes manejar los datos recibidos, como establecer el estado o realizar otras operaciones
         } else {
           console.error(
             "Error en la respuesta de la solicitud:",
@@ -75,109 +70,157 @@ const Sidebar = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      // Verificar el tamaño de la ventana para mostrar u ocultar el botón de menú
+      setShowMenuButton(window.innerWidth < 1024);
+    };
+
+    // Agregar el listener para el evento de cambio de tamaño de la ventana
+    window.addEventListener("resize", handleResize);
+
+    // Llamar a handleResize al inicio para configurar correctamente el estado
+    handleResize();
+
+    // Limpiar el listener cuando el componente se desmonte
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const menuList = [
     {
       group: "Pages",
       items: [
-        // Verificar si userStatus es true (user.locked)
         userStatus === true
           ? [{ to: "/inactive", icon: <StickyNote />, text: "Status" }]
-          : // Verificar si el usuario NO tiene el rol de "student"
-          !userRole || userRole == "student"
+          : !userRole || userRole == "student"
           ? [
               { to: "/post", icon: <StickyNote />, text: "Post" },
               { to: "/profile", icon: <User />, text: "Profile" },
             ]
           : [
               { to: "/dashboard", icon: <Users />, text: "Dashboard" },
+              { to: "/home", icon: <User />, text: "Home" },
               { to: "/posts", icon: <StickyNote />, text: "Posts" },
               { to: "/post", icon: <StickyNote />, text: "Post" },
               { to: "/profile", icon: <User />, text: "Profile" },
-            ], // Si el usuario tiene el rol de "student", no mostramos ninguna otra ruta
-      ].flat(), // Utilizamos flat para aplanar el array
+            ],
+      ].flat(),
     },
   ];
 
-  // Función para recargar la página cuando se hace clic en el botón de logout
   const handleLogout = () => {
     Userfront.logout();
-    window.location.reload();
-    console.log("hola");
+    navigate("/login");
   };
 
   return (
-    <div className="fixed flex flex-col gap-4 w-[260px] min-w-[250px] border-r min-h-screen p-2 bg-white mt-20">
-      <div>
-        {userData && (
-          <div>
-            <div className="flex items-center gap-4 justify-start p-2 border rounded-[8px] ">
-              <img
-                src={userData.image}
-                className="border max-w-16 bg-emerald-500 p-0.5 mb-3 rounded-lg"
-                alt={"Avatar of the user: " + userData.name}
-              />
-              <div>
-                <p className="font-bold text-[16px]">Hello {userData.name}!</p>
-                <p className="text-[13px] text-neutral-500]">
-                  {userData.email}
-                </p>
+    <section>
+      {userData && (
+        <div className="fixed lg:w-[260px] lg:min-w-[250px] md:min-w-[8px] sm:min-w-auto border-r min-h-screen p-2 lg:bg-white mt-16  sm:bg-white xs:bg-white xs:opacity-90 border-dotted border-2 border-gray-800 xs:min-w-[8px] z-10">
+          {showMenuButton && (
+            <button
+              className="lg:hidden ml-auto flex"
+              onClick={() => setMenuOpen(!menuOpen)}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 right-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                {menuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16m-7 6h7"
+                  />
+                )}
+              </svg>
+            </button>
+          )}
+          <div
+            className={`${
+              menuOpen || !showMenuButton ? "block" : "hidden"
+            } lg:block `}>
+            <section>
+              <div className="flex items-center gap-4 justify-start p-2 border rounded-[8px] bg-white xs:flex-col xs:mt-0 ">
+                <img
+                  src={userData.image}
+                  className="border max-w-16 bg-emerald-500 p-0.5 mb-3 rounded-lg xs:mb-0"
+                  alt={"Avatar of the user: " + userData.name}
+                />
+                <div>
+                  <p className="font-bold text-[16px] ">
+                    Hello {userData.name}!
+                  </p>
+                  <p className="text-[13px] text-neutral-500] xs:hidden md:block">
+                    {userData.email}
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <Command>
-              <CommandList>
-                {menuList.map((menu, key) => (
-                  <CommandGroup key={key}>
-                    {menu.items.map((item, itemKey) => (
-                      <div key={itemKey}>
-                        <div className="flex gap-5 py-1">
-                          {item.icon}
-                          <li className="list-none hover:translate-x-1  hover:text-blue-900 font-medium">
-                            <NavLink
-                              to={item.to}
-                              exact={item.toString()}
-                              className={({ isActive }) =>
-                                isActive
-                                  ? "text-lime-600 font-bold hover:translate-x-1 hover:text-blue-900"
-                                  : "text-black font-semibold hover:translate-x-1 hover:text-blue-900"
-                              }>
-                              {item.text}
-                            </NavLink>
-                          </li>
+              <Command>
+                <CommandList>
+                  {menuList.map((menu, key) => (
+                    <CommandGroup key={key}>
+                      {menu.items.map((item, itemKey) => (
+                        <div key={itemKey}>
+                          <div className="flex gap-5 py-1">
+                            {item.icon}
+                            <li className="list-none hover:translate-x-1  hover:text-blue-900 font-medium">
+                              <NavLink
+                                to={item.to}
+                                exact={item.toString()}
+                                className={({ isActive }) =>
+                                  isActive
+                                    ? "text-lime-600 font-bold hover:translate-x-1 hover:text-blue-900"
+                                    : "text-black font-semibold hover:translate-x-1 hover:text-blue-900"
+                                }>
+                                {item.text}
+                              </NavLink>
+                            </li>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </CommandGroup>
-                ))}
-                <CommandSeparator />
-              </CommandList>
-            </Command>
-            <div className="w-20 mt-6 align-middle text-right">
-              <LogoutButton
-                theme={{
-                  colors: {
-                    light: "#ffffff",
-                    dark: "#5e72e4",
-                    accent: "#187cbf",
-                    lightBackground: "#fdfdfd",
-                    darkBackground: "#2d2d2d",
-                  },
-                  colorScheme: "auto",
-                  fontFamily: "Avenir, Helvetica, Arial, sans-serif",
-                  size: "compact",
-                  extras: {
-                    rounded: true,
-                    gradientButtons: true,
-                    hideSecuredMessage: false,
-                  },
-                }}
-                onSubmit={handleLogout} // Asigna la función de manejo de clics
-              />
-            </div>
+                      ))}
+                    </CommandGroup>
+                  ))}
+                  <CommandSeparator />
+                </CommandList>
+              </Command>
+              <div className="w-20 mt-6 align-middle text-right">
+                <LogoutButton
+                  theme={{
+                    colors: {
+                      light: "#ffffff",
+                      dark: "#5e72e4",
+                      accent: "#187cbf",
+                      lightBackground: "#fdfdfd",
+                      darkBackground: "#2d2d2d",
+                    },
+                    colorScheme: "auto",
+                    fontFamily: "Avenir, Helvetica, Arial, sans-serif",
+                    size: "compact",
+                    extras: {
+                      rounded: true,
+                      gradientButtons: true,
+                      hideSecuredMessage: false,
+                    },
+                  }}
+                  onSubmit={handleLogout} // Asigna la función de manejo de clics
+                />
+              </div>
+            </section>
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </section>
   );
 };
 
