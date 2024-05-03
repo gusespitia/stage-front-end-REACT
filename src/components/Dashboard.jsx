@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import Userfront from "@userfront/toolkit/react";
 import { useNavigate } from "react-router-dom";
 import Footer from "./Footer";
+import { USERFRONT_ACCESS_TOKEN } from "./config";
 import {
   Tooltip,
   TooltipContent,
@@ -35,7 +36,7 @@ import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
+  // TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -64,6 +65,12 @@ const Dashboard = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false); // Nuevo estado para la confirmación de eliminación
   const [estado, setEstado] = useState(false);
+  // FILTERS
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [filterRole, setFilterRole] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+
   const navigate = useNavigate();
   const formulario = useForm({
     resolver: zodResolver(FormSchema2),
@@ -73,7 +80,6 @@ const Dashboard = () => {
   });
 
   const onSubmit2 = (data) => {
-    // console.log("Form data:", data);
     toast({
       title: "You submitted the following values:",
       description: (
@@ -95,9 +101,11 @@ const Dashboard = () => {
     }),
     phoneNumber: z.string().refine(
       (value) => {
+        // Eliminar espacios en blanco
+        const trimmedValue = value.replace(/\s/g, "");
         // Expresión regular para validar el formato del número de teléfono
         const phoneNumberRegex = /^\+\d{11}$/; // Formato: +15558675309
-        return phoneNumberRegex.test(value);
+        return phoneNumberRegex.test(trimmedValue);
       },
       {
         message: "Phone number must be in the format +15558675309.",
@@ -116,7 +124,7 @@ const Dashboard = () => {
       username: selectedUser ? selectedUser.username : "",
       email: selectedUser ? selectedUser.email : "",
       phoneNumber: selectedUser ? selectedUser.phoneNumber : "",
-      roles: selectedUser ? selectedUser.roles : "", // Agrega el valor predeterminado para el campo 'role'
+      roles: selectedUser ? selectedUser.roles : "student", // Agrega el valor predeterminado para el campo 'role'
       locked: selectedUser ? selectedUser.locked : false, // Agrega el valor predeterminado para el campo 'locked'
     },
   });
@@ -202,8 +210,8 @@ const Dashboard = () => {
         username: selectedUser.username,
         email: selectedUser.email,
         phoneNumber: selectedUser.phoneNumber,
-        roles: selectedUser.roles, // Corregido para incluir los roles
-        locked: selectedUser.locked, // Corregido para incluir los roles
+        roles: selectedUser.roles,
+        locked: selectedUser.locked,
       });
     }
   }, [selectedUser, form]);
@@ -221,8 +229,7 @@ const Dashboard = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization:
-                "Bearer uf_test_admin_xbpwd96n_c9a7bff77e3d3552fca270f56c9b50ea",
+              Authorization: USERFRONT_ACCESS_TOKEN,
             },
             body: JSON.stringify({
               filters: {
@@ -241,13 +248,11 @@ const Dashboard = () => {
         if (response.ok) {
           const data = await response.json();
           setUsersData(data.results);
-          // console.log(data.results);
-          // Suponiendo que 'data' es el objeto que has mostrado
-          const users = data.results; // Obtener el array de resultados de usuarios
+          console.log(data.results);
 
-          // Iterar sobre cada usuario
+          const users = data.results;
+
           users.forEach((user) => {
-            // Acceder a los roles del usuario
             const roles = user.authorization?.xbpwd96n?.roles;
 
             if (roles) {
@@ -256,8 +261,6 @@ const Dashboard = () => {
               console.log("No se encontraron roles para el usuario");
             }
           });
-
-          // Aquí puedes manejar los datos recibidos, como establecer el estado o realizar otras operaciones
         } else {
           console.error(
             "Error en la respuesta de la solicitud:",
@@ -284,8 +287,7 @@ const Dashboard = () => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            Authorization:
-              "Bearer uf_test_admin_xbpwd96n_c9a7bff77e3d3552fca270f56c9b50ea",
+            Authorization: USERFRONT_ACCESS_TOKEN,
           },
         }
       );
@@ -294,10 +296,10 @@ const Dashboard = () => {
         console.log("User deleted successfully");
         setDeleteConfirmation(true);
         window.location.reload();
-        return true; // Indica que la eliminación del usuario fue exitosa
+        return true;
       } else {
         console.error("Failed to delete user");
-        return false; // Indica que la eliminación del usuario falló
+        return false;
       }
     } catch (error) {
       console.error("An error occurred:", error);
@@ -308,32 +310,82 @@ const Dashboard = () => {
     try {
       const deletionSuccessful = await deleteUser(userId);
       if (deletionSuccessful) {
-        // Muestra el mensaje de éxito después de eliminar el usuario con éxito
         setSuccessMessage("User deleted successfully.");
-
-        // Cierra el mensaje de éxito después de 3 segundos
         setTimeout(() => {
           setSuccessMessage(null);
         }, 3000);
       } else {
-        // Puedes mostrar un mensaje de error si la eliminación del usuario falló
+        console.log("User couldnot be deleted ");
       }
     } catch (error) {
       console.error("An error occurred:", error);
-      // Puedes mostrar un mensaje de error si la eliminación del usuario falló debido a un error
     }
   };
   const handleSwitchChange = (newValue) => {
     setEstado(newValue);
     formulario.handleSubmit(onSubmit2)();
   };
+  const sortedUsers = usersData.slice().sort((a, b) => {
+    if (a.userId < b.userId) return sortOrder === "asc" ? -1 : 1;
+    if (a.userId > b.userId) return sortOrder === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const filteredUsers = sortedUsers.filter((user) => {
+    return user.name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const filteredByStatus = filteredUsers.filter((user) => {
+    return filterStatus === "" || user.locked.toString() === filterStatus;
+  });
+
+  const filteredByRole = filteredByStatus.filter((user) => {
+    return (
+      filterRole === "" ||
+      user.authorization?.xbpwd96n?.roles.toString() === filterRole
+    );
+  });
+
+  const handleSort = () => {
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
   return (
     <section className="mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-18 sm:mb-6 overflow-x-auto xs:ml-9 ">
+      <div className="flex items-center mb-4 space-x-4">
+        {/* Input para buscar por nombre */}
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border rounded-md px-2 py-1"
+        />
+
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="border rounded-md px-2 py-1">
+          <option value="">All Status</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+        <select
+          value={[filterRole]}
+          onChange={(e) => setFilterRole(e.target.value)}
+          className="border rounded-md px-2 py-1">
+          <option value="">All Roles</option>
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+          <option value=" ">No roles</option>
+        </select>
+      </div>
       <FormProvider {...form}>
         <Table className="text-center mt-1 w-full border-2 rounded-md">
           <TableHeader>
             <TableRow className="bg-neutral-800 hover:bg-neutral-500">
-              <TableHead className="item-table">Id</TableHead>
+              <TableHead className="item-table" onClick={handleSort}>
+                ID
+              </TableHead>
               <TableHead className="item-table">Name</TableHead>
               <TableHead className="item-table">Username</TableHead>
               <TableHead className="item-table">Email</TableHead>
@@ -346,7 +398,7 @@ const Dashboard = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {usersData.map((user, index) => (
+            {filteredByRole.map((user, index) => (
               <TableRow
                 key={index}
                 className={
@@ -367,7 +419,9 @@ const Dashboard = () => {
                   {user.locked ? (
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger>Active</TooltipTrigger>
+                        <TooltipTrigger className="bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 px-4 border-b-4 border-lime-700 hover:border-lime-300 rounded">
+                          Active
+                        </TooltipTrigger>
                         <TooltipContent>
                           <p>Active</p>
                         </TooltipContent>
@@ -376,7 +430,9 @@ const Dashboard = () => {
                   ) : (
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger>Inactive</TooltipTrigger>
+                        <TooltipTrigger className="bg-red-400 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
+                          Inactive
+                        </TooltipTrigger>
                         <TooltipContent>
                           <p>Inactive</p>
                         </TooltipContent>
@@ -391,7 +447,7 @@ const Dashboard = () => {
                 <TableCell>
                   <AlertDialog>
                     <AlertDialogTrigger
-                      className="px-4 py-2 border rounded-md text-white bg-blue-700"
+                      className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
                       onClick={() => handleUserSelect(user)}>
                       Edit
                     </AlertDialogTrigger>
@@ -563,7 +619,7 @@ const Dashboard = () => {
                 </TableCell>
                 <TableCell>
                   <AlertDialog>
-                    <AlertDialogTrigger className="px-2 py-2 border rounded-md text-white bg-red-700">
+                    <AlertDialogTrigger className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">
                       Delete
                     </AlertDialogTrigger>
                     <AlertDialogContent>

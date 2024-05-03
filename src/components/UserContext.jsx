@@ -1,28 +1,28 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Userfront from "@userfront/toolkit/react";
-import { USERFRONT_ACCESS_TOKEN } from "./config";
+// UserContext.js
 
-const UserItem = () => {
+import  { createContext, useContext, useState } from "react";
+import { USERFRONT_ACCESS_TOKEN } from "./config";
+import Userfront from "@userfront/toolkit/react";
+import {  useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+// Crea el contexto de usuario
+const UserContext = createContext();
+
+// Proveedor del contexto de usuario
+export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Verificar si el usuario está autenticado
         if (!Userfront.accessToken()) {
           navigate("/login");
           return;
         }
-
-        // Obtener el userId del token de acceso
         const userData = JSON.parse(
           atob(Userfront.accessToken().split(".")[1])
         );
         const userId = userData.userId;
-
-        // Realizar la solicitud utilizando el userId
         const response = await fetch(
           `https://api.userfront.com/v0/tenants/xbpwd96n/users/${userId}`,
           {
@@ -33,13 +33,10 @@ const UserItem = () => {
             },
           }
         );
-
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
-
         const result = await response.json();
-
         setUserData(result);
       } catch (error) {
         console.log(error);
@@ -47,24 +44,12 @@ const UserItem = () => {
     };
     fetchData();
   }, []);
-
   return (
-    <div>
-      {userData && (
-        <div className="flex items-center gap-4 justify-start p-2 border rounded-[8px] ">
-          <img
-            src={userData.image}
-            className="avatar rounded-full min-h-10 min-w-10 max-w-16 bg-emerald-500 p-1 mb-3"
-            alt=""
-          />
-          <div>
-            <p className="font-bold text-[16px]">Hello {userData.name}!</p>
-            <p className="text-[13px] text-neutral-500]">{userData.email}</p>
-          </div>
-        </div>
-      )}
-    </div>
+    <UserContext.Provider value={{ userData, setUserData }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 
-export default UserItem;
+// Hook personalizado para acceder al contexto de usuario
+export const useUser = () => useContext(UserContext);

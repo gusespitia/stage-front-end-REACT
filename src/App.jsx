@@ -13,16 +13,20 @@ import Navbar from "./components/Navbar";
 import NotFound from "./components/NotFound";
 import Inactive from "./components/Inactive";
 import Home from "./components/Home";
-
+import { UserProvider } from "./components/UserContext"; // Importa el proveedor de contexto de usuario
+import OtroComponente from "./components/OtroComponente";
 Userfront.init("xbpwd96n");
 
 function App() {
   return (
     <Router>
+            <UserProvider> {/* Envuelve tu aplicación con el proveedor de contexto de usuario */}
+
       <Navbar />
       <Layout>
         <Routes>
-          <Route path="/" element={<Profile />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/data" element={<OtroComponente />} />
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
@@ -36,6 +40,7 @@ function App() {
           {/* Manejar rutas no encontradas */}
         </Routes>
       </Layout>
+      </UserProvider>
     </Router>
   );
 }

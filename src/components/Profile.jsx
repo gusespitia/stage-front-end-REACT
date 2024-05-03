@@ -7,12 +7,14 @@ import { Label } from "@/components/ui/label";
 import { uploadFile } from "../firebase/config";
 import { Progress } from "@/components/ui/progress";
 import Footer from "./Footer";
+import { USERFRONT_ACCESS_TOKEN } from "./config";
+import { useUser } from "./UserContext"; 
 import {
   Form,
   FormControl,
   FormItem,
   FormField,
- // FormLabel,
+  // FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -51,12 +53,13 @@ const FormSchema = z.object({
 });
 
 const Profile = () => {
-  const [userData, setUserData] = useState(null);
+ 
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(0);
-  const navigate = useNavigate();
+ 
+  const { userData } = useUser();
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -68,51 +71,45 @@ const Profile = () => {
     },
   });
 
-  const formRef = useRef(null); // Referencia al formulario
+  const formRef = useRef(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Recorre el valor de la barra de progreso de 1 a 100 en 3 segundos
       for (let i = 0; i <= 100; i++) {
         setTimeout(() => {
           setProgress(i);
-        }, i * 40); // Ajusta el tiempo de cada incremento (en milisegundos)
+        }, i * 40);
       }
-    }, 4000); // 3 segundos de espera antes de iniciar el ciclo
+    }, 4000);
 
-    return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonta
+    return () => clearInterval(interval);
   }, []);
 
   const onSubmit = async (data) => {
     try {
-      setProgress(true); // Mostrar la barra de progreso al enviar el formulario
+      setProgress(true);
 
       if (file) {
-        // Sube el archivo y obtén el fullPath
         const fullPath = await uploadFile(file);
-        // console.log(fullPath);
-        // Actualiza el estado del formulario con el nuevo fullPath
+
         form.setValue("image", fullPath);
-        // Agrega el fullPath al objeto data
+
         data.image = fullPath;
       }
 
-      // Realiza la solicitud para actualizar los datos del usuario en el servidor
       const response = await fetch(
         `https://back-end-knex-js.vercel.app/updateUser/${userData.userId}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization:
-              "Bearer uf_test_admin_xbpwd96n_c9a7bff77e3d3552fca270f56c9b50ea",
+            Authorization: USERFRONT_ACCESS_TOKEN,
           },
           body: JSON.stringify(data),
         }
       );
 
       if (response.ok) {
-        // Si la solicitud es exitosa, muestra un mensaje de éxito
         setIsAlertDialogOpen(true);
 
         setMessage("User data updated successfully!");
@@ -123,58 +120,15 @@ const Profile = () => {
           window.location.href = "/gus";
         }, 3600);
       } else {
-        // Si la solicitud falla, muestra un mensaje de error
         setMessage("Failed to update user data");
       }
     } catch (error) {
       console.error("Error updating user data:", error);
     }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!Userfront.accessToken()) {
-          navigate("/login");
-          return;
-        }
-
-        const userData = JSON.parse(
-          atob(Userfront.accessToken().split(".")[1])
-        );
-        //  console.log(userData.image);
-        const userId = userData.userId;
-
-        const response = await fetch(
-          `https://api.userfront.com/v0/tenants/xbpwd96n/users/${userId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization:
-                "Bearer uf_test_admin_xbpwd96n_c9a7bff77e3d3552fca270f56c9b50ea",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
-        const result = await response.json();
-        // console.log(result);
-        // Actualiza el estado userData con los datos del usuario
-        setUserData(result);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
+  }; 
 
   useEffect(() => {
     if (userData) {
-      // Actualiza los valores iniciales del formulario con los datos del usuario
       form.reset({
         name: userData.name,
         username: userData.username,
@@ -296,7 +250,7 @@ const Profile = () => {
                         {!message && (
                           <button
                             type="button"
-                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 ">
+                            className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded ">
                             Edit
                           </button>
                         )}

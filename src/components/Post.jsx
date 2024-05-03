@@ -232,45 +232,43 @@ const Post = () => {
                 </div>
               </form>
             </div>
-
-            {posts.map((post) => (
-              <div
-                key={post.id}
-                className="px-6 border rounded-2xl py-6 mt-4 mb-2 w-[600px] shadow-md bg-white flex ">
-                <ul className="grid grid-cols-2 grid-cols-custom gap-y-2 ">
-                  <Label className="col-start-1">Title:</Label>
-                  <li className="text-[16px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
-                    {post.title}
-                  </li>
-                  <Label className="col-start-1">Data:</Label>
-                  <div className="text-[15px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: post.data,
-                      }}
-                    />
-                  </div>
-                  <Separator className="mt-3 w-[550px]" />
-                  <li className="text-xs text-neutral-800 col-start-1 col-span-2">
-                    <Label className="col-start-1 text-neutral-800 ">
-                      Posted:
-                    </Label>
-                    <br />
-                    {new Date(post.created_at).toLocaleDateString("en-EN", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                      minute: "numeric",
-                      second: "numeric",
-                    })}
-                  </li>
-                </ul>
-              </div>
-            ))}
           </section>
         )}
-        <Footer />
+
+        {posts.map((post) => (
+          <div
+            key={post.id}
+            className="px-6 border rounded-2xl py-6 mt-20 mb-4 max-w-[600px] shadow-md bg-white flex mx-auto ">
+            <ul className="grid grid-cols-2 grid-cols-custom gap-y-2 ">
+              <Label className="col-start-1">Title:</Label>
+              <li className="text-[16px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
+                {post.title}
+              </li>
+              <Label className="col-start-1">Data:</Label>
+              <div className="text-[15px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: post.data,
+                  }}
+                />
+              </div>
+              <Separator className="mt-3 w-[550px]" />
+              <li className="text-xs text-neutral-800 col-start-1 col-span-2">
+                <Label className="col-start-1 text-neutral-800 ">Posted:</Label>
+                <br />
+                {new Date(post.created_at).toLocaleDateString("en-EN", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  minute: "numeric",
+                  second: "numeric",
+                })}
+              </li>
+            </ul>
+          </div>
+        ))}
       </div>
+      <Footer />
     </section>
   );
 };

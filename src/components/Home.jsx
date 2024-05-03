@@ -2,6 +2,7 @@ import Userfront from "@userfront/toolkit/react";
 import { NavLink } from "react-router-dom";
 import Footer from "./Footer";
 import { useEffect, useState } from "react";
+import { USERFRONT_ACCESS_TOKEN } from "./config";
 import {
   Carousel,
   CarouselContent,
@@ -42,8 +43,7 @@ const Home = () => {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization:
-                "Bearer uf_test_admin_xbpwd96n_c9a7bff77e3d3552fca270f56c9b50ea",
+              Authorization: USERFRONT_ACCESS_TOKEN,
             },
           }
         );
@@ -68,9 +68,11 @@ const Home = () => {
         <div className="mb-2 sm:row-start-1 sm:col-span-2">
           <h1 className="text-3xl font-bold mb-10 text-center sm:text-[24px] sm:mb-3 md:text-[28px] md:mb-8 lg:text-[34px] xs:mt-4 xs:mb-6">
             Welcome{" "}
-            {userData && <span className=""> {userData.name.split(" ")[0] + " "}</span>}
-         
-          to SocialGus!</h1>
+            {userData && (
+              <span className=""> {userData.name.split(" ")[0] + " "}</span>
+            )}
+            to SocialGus!
+          </h1>
 
           <p className="text-gray-800 mb-6 text-justify lg:text-lg xs:mb-4 xs:text-[18px] xs:tracking-wide">
             <strong>SocialGus</strong> is an exciting social platform designed

@@ -6,7 +6,7 @@ import {
   BookOpenCheck,
   UserRoundX,
 } from "lucide-react";
-
+import { USERFRONT_ACCESS_TOKEN } from "./config";
 import { NavLink } from "react-router-dom";
 import Userfront, { LogoutButton } from "@userfront/toolkit/react";
 import { useState, useEffect } from "react";
@@ -50,8 +50,7 @@ const Sidebar = () => {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization:
-                "Bearer uf_test_admin_xbpwd96n_c9a7bff77e3d3552fca270f56c9b50ea",
+              Authorization: USERFRONT_ACCESS_TOKEN,
             },
           }
         );
@@ -106,6 +105,7 @@ const Sidebar = () => {
             ]
           : [
               { to: "/home", icon: <Home />, text: "Home" },
+              { to: "/data", icon: <Home />, text: "data" },
               { to: "/dashboard", icon: <Users />, text: "Dashboard" },
               { to: "/posts", icon: <BookOpenCheck />, text: "Posts" },
               { to: "/post", icon: <NotebookPen />, text: "Post" },

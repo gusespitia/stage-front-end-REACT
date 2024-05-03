@@ -1,5 +1,6 @@
 import Userfront, { SignupForm } from "@userfront/toolkit/react";
 import Footer from "./Footer";
+import { USERFRONT_ACCESS_TOKEN } from "./config";
 Userfront.init("xbpwd96n");
 
 const Register = () => {
@@ -23,8 +24,7 @@ const Register = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization:
-              "Bearer uf_test_admin_xbpwd96n_c9a7bff77e3d3552fca270f56c9b50ea",
+            Authorization: USERFRONT_ACCESS_TOKEN,
           },
           body: JSON.stringify(payload),
         }
