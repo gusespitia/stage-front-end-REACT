@@ -1,0 +1,1 @@
+export const USERFRONT_ACCESS_TOKEN = "tu_token_de_acceso";
