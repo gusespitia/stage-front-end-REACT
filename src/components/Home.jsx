@@ -1,6 +1,7 @@
 import Userfront from "@userfront/toolkit/react";
 import { NavLink } from "react-router-dom";
 import Footer from "./Footer";
+import { useEffect, useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -9,7 +10,7 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
+import { useNavigate } from "react-router-dom";
 const slideImages = [
   "./images/slide1.jpg",
   "./images/slide2.jpg",
@@ -19,14 +20,59 @@ const slideImages = [
 Userfront.init("xbpwd96n");
 
 const Home = () => {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!Userfront.accessToken()) {
+          navigate("/login");
+          return;
+        }
+
+        const userData = JSON.parse(
+          atob(Userfront.accessToken().split(".")[1])
+        );
+        //  console.log(userData.image);
+        const userId = userData.userId;
+
+        const response = await fetch(
+          `https://api.userfront.com/v0/tenants/xbpwd96n/users/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                "Bearer uf_test_admin_xbpwd96n_c9a7bff77e3d3552fca270f56c9b50ea",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const result = await response.json();
+        // console.log(result);
+        // Actualiza el estado userData con los datos del usuario
+        setUserData(result);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <section className="mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-18 sm:mb-6 overflow-x-auto xs:ml-9 sm:ml-9">
       <div className="border rounded-md xs:mt-4 xs:p-4 md:px-16">
         <div className="mb-2 sm:row-start-1 sm:col-span-2">
-          <h1 className="text-3xl font-bold mb-10 text-center sm:text-[24px] sm:mb-3 md:text-[28px] md:mb-8 lg:text-[36px] xs:mt-4 xs:mb-6">
-            Welcome to SocialGus
-          </h1>
-          <p className="sm:text-[20px] md:text-base text-justify xs:font-medium xs:px-4 md:px-2 md:text-[20px] md:mb-8 sm:my-8 xs:text-[18px] ">
+          <h1 className="text-3xl font-bold mb-10 text-center sm:text-[24px] sm:mb-3 md:text-[28px] md:mb-8 lg:text-[34px] xs:mt-4 xs:mb-6">
+            Welcome{" "}
+            {userData && <span className=""> {userData.name.split(" ")[0] + " "}</span>}
+         
+          to SocialGus!</h1>
+
+          <p className="text-gray-800 mb-6 text-justify lg:text-lg xs:mb-4 xs:text-[18px] xs:tracking-wide">
             <strong>SocialGus</strong> is an exciting social platform designed
             to connect people from all over the world. With an intuitive
             interface and powerful features, <strong>SocialGus</strong> offers
@@ -77,7 +123,7 @@ const Home = () => {
               Create Your Own Space
             </h2>
             <br />
-            <p className="text-gray-800 text-justify mb-4 lg:text-[18px] xs:mb-4">
+            <p className="text-gray-800 mb-6 text-justify lg:text-lg xs:mb-4 xs:text-[18px] xs:tracking-wide">
               Personalize your profile to reflect your unique personality. Share
               details about your interests, hobbies, and experiences. Post on
               your wall, share stories, and keep your followers updated on what
@@ -94,7 +140,7 @@ const Home = () => {
               Discover New Opportunities
             </h2>
             <br />
-            <p className="text-gray-800 text-justify mb-4 lg:text-[18px] xs:mb-4">
+            <p className="text-gray-800 mb-6 text-justify lg:text-lg xs:mb-4 xs:text-[18px] xs:tracking-wide">
               <strong>SocialGus</strong> is not just about connecting with
               friends, it is also a platform to discover new opportunities. Find
               local events, join like-minded groups, and participate in
@@ -107,7 +153,7 @@ const Home = () => {
             </NavLink>
           </div>
         </div>
-        <p className="text-gray-800 m-12 text-center xs:mx-2 xs:text-lg xs:mb-1">
+        <p className="text-gray-800 m-12 text-center xs:mx-2 xs:text-lg xs:mb-1 font-medium">
           Join the <strong className="text-blue-900">SocialGus</strong>{" "}
           community today and start exploring a world of possibilities!
         </p>
