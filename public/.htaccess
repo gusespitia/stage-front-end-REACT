@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /gus/
+
+# Redirigir todas las solicitudes que no sean archivos existentes a index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /socialgus/index.html [L,QSA]
