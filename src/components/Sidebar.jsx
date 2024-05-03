@@ -105,7 +105,6 @@ const Sidebar = () => {
             ]
           : [
               { to: "/home", icon: <Home />, text: "Home" },
-              { to: "/data", icon: <Home />, text: "data" },
               { to: "/dashboard", icon: <Users />, text: "Dashboard" },
               { to: "/posts", icon: <BookOpenCheck />, text: "Posts" },
               { to: "/post", icon: <NotebookPen />, text: "Post" },

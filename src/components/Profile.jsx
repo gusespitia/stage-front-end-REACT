@@ -8,7 +8,7 @@ import { uploadFile } from "../firebase/config";
 import { Progress } from "@/components/ui/progress";
 import Footer from "./Footer";
 import { USERFRONT_ACCESS_TOKEN } from "./config";
-import { useUser } from "./UserContext"; 
+import { useUser } from "./UserContext";
 import {
   Form,
   FormControl,
@@ -53,12 +53,11 @@ const FormSchema = z.object({
 });
 
 const Profile = () => {
- 
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(0);
- 
+
   const { userData } = useUser();
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -80,7 +79,7 @@ const Profile = () => {
           setProgress(i);
         }, i * 40);
       }
-    }, 4000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -117,15 +116,15 @@ const Profile = () => {
           setIsAlertDialogOpen(false);
           // setIsAlertDialogOpen(true);
           setMessage("");
-          window.location.href = "/gus";
-        }, 3600);
+          window.location.reload();
+        }, 1500);
       } else {
         setMessage("Failed to update user data");
       }
     } catch (error) {
       console.error("Error updating user data:", error);
     }
-  }; 
+  };
 
   useEffect(() => {
     if (userData) {

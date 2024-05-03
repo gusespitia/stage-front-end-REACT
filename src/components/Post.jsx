@@ -129,7 +129,7 @@ const Post = () => {
         throw new Error("Failed to send data");
       }
 
-      window.location.href = "/gus";
+      window.location.reload();
     } catch (error) {
       console.error("Error sending data:", error);
     }
