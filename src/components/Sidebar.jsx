@@ -1,6 +1,12 @@
-import { User } from "lucide-react";
-import { Users } from "lucide-react";
-import { StickyNote } from "lucide-react";
+import {
+  User,
+  Home,
+  Users,
+  NotebookPen,
+  BookOpenCheck,
+  UserRoundX,
+} from "lucide-react";
+
 import { NavLink } from "react-router-dom";
 import Userfront, { LogoutButton } from "@userfront/toolkit/react";
 import { useState, useEffect } from "react";
@@ -91,17 +97,18 @@ const Sidebar = () => {
       group: "Pages",
       items: [
         userStatus === true
-          ? [{ to: "/inactive", icon: <StickyNote />, text: "Status" }]
+          ? [{ to: "/inactive", icon: <UserRoundX />, text: "Status" }]
           : !userRole || userRole == "student"
           ? [
-              { to: "/post", icon: <StickyNote />, text: "Post" },
+              { to: "/home", icon: <Home />, text: "Home" },
+              { to: "/post", icon: <NotebookPen />, text: "Post" },
               { to: "/profile", icon: <User />, text: "Profile" },
             ]
           : [
+              { to: "/home", icon: <Home />, text: "Home" },
               { to: "/dashboard", icon: <Users />, text: "Dashboard" },
-              { to: "/home", icon: <User />, text: "Home" },
-              { to: "/posts", icon: <StickyNote />, text: "Posts" },
-              { to: "/post", icon: <StickyNote />, text: "Post" },
+              { to: "/posts", icon: <BookOpenCheck />, text: "Posts" },
+              { to: "/post", icon: <NotebookPen />, text: "Post" },
               { to: "/profile", icon: <User />, text: "Profile" },
             ],
       ].flat(),

@@ -146,7 +146,7 @@ const Dashboard = () => {
         setSuccessMessage("User information updated successfully.");
         // Redirige a la página de inicio o a la página de dashboard
 
-        window.location.href = "/gus"; // Redirige a la página de dashboard
+        window.location.reload();
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message);
@@ -172,7 +172,7 @@ const Dashboard = () => {
 
       if (response.ok) {
         // console.log(`User role updated successfully to ${roles}`);
-        window.location.href = "/gus";
+        window.location.reload();
         // Puedes mostrar un mensaje de éxito si lo deseas
       } else {
         const errorData = await response.json();
@@ -194,11 +194,6 @@ const Dashboard = () => {
     const rolesToSend = Array.isArray(roles) ? roles : [roles];
     await handleUserRoleUpdate(userId, rolesToSend);
   };
-
-  // const handleChangeLocked = (checked) => {
-  //   // Actualizar el valor de locked en el formulario cuando cambia el Switch
-  //   form.setValue("locked", !checked);
-  // };
 
   useEffect(() => {
     if (selectedUser) {
@@ -298,7 +293,7 @@ const Dashboard = () => {
       if (response.ok) {
         console.log("User deleted successfully");
         setDeleteConfirmation(true);
-        window.location.href = "/gus";
+        window.location.reload();
         return true; // Indica que la eliminación del usuario fue exitosa
       } else {
         console.error("Failed to delete user");
