@@ -351,8 +351,7 @@ const Dashboard = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
   return (
-    <section className="mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-18 sm:mb-6 overflow-x-auto xs:ml-9 ">
-      <div className="flex items-center mb-4 space-x-4 mt-2 justify-end">
+    <section className="min-h-screen mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-12 sm:mb-6 overflow-x-auto xs:ml-9">      <div className="flex items-center mb-4 space-x-4 mt-2 justify-end">
         {/* Input para buscar por nombre */}
         <input
           type="text"

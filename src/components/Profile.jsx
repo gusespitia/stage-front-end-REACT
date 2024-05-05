@@ -143,8 +143,7 @@ const Profile = () => {
   };
 
   return (
-    <section className="mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-18 sm:mb-6 overflow-x-auto xs:ml-9">
-      <div>
+    <section className="min-h-screen mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-12 sm:mb-6 overflow-x-auto xs:ml-9">      <div>
         {message && <Progress value={progress} className="bg-green-600" />}
         {userData && (
           <section className="mb-2 sm:row-start-1 sm:col-span-2 mt-4 lg:mr-28 sm:mr-2 sm:shadow-sm border rounded-xl sm:p-0 sm:pb-2 ">

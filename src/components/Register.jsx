@@ -41,8 +41,8 @@ const Register = () => {
   };
 
   return (
-    <section className="md:ml-4 md:mx-10 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl p-6 mt-20 sm:mx-4 sm:mt-[60px] sm:ml-12  lg:mx-24 h-lvh xs:mt-16">
-      <h1 className="text-3xl font-bold mb-10 text-center sm:text-xl sm:mb-3 md:text-2xl md:mb-8 lg:text-4xl">
+    <section className="md:ml-4 md:mx-10 lg:ml-52 lg:mx-48 box-content max-w-screen-xl bg-gray-400 border rounded-xl p-6 mt-20 sm:mx-4 sm:mt-[68px] sm:ml-12 sm:mb-6 xs:mt-16">
+      <h1 className="text-3xl font-bold mb-10 text-center sm:text-xl sm:mb-3 md:text-2xl md:mb-8 lg:text-4xl mt-6">
         Welcome to SocialGus
       </h1>
       <p className="text-gray-800 mb-6 text-justify lg:text-lg">
@@ -74,7 +74,6 @@ const Register = () => {
           }}
         />
       </div>
-
       <p className="text-gray-800 mt-8 text-center">
         Join the <strong className="text-blue-900">SocialGus</strong> community
         today and start exploring a world of possibilities!
