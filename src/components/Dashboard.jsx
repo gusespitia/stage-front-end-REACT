@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/select";
 
 import {
-  // Form,
   FormControl,
   FormDescription,
   FormField,
@@ -36,7 +35,6 @@ import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
-  // TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -54,16 +52,18 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/components/ui/use-toast";
-// import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 const FormSchema2 = z.object({
   locked: z.boolean().default("false").optional(),
 });
+
 const Dashboard = () => {
+  // State variables and their setters
   const [usersData, setUsersData] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [deleteConfirmation, setDeleteConfirmation] = useState(false); // Nuevo estado para la confirmación de eliminación
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
   const [estado, setEstado] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -72,6 +72,8 @@ const Dashboard = () => {
   const [sortOrder, setSortOrder] = useState("asc");
 
   const navigate = useNavigate();
+
+  // Form handling using react-hook-form
   const formulario = useForm({
     resolver: zodResolver(FormSchema2),
     defaultValues: {
@@ -79,6 +81,7 @@ const Dashboard = () => {
     },
   });
 
+  // Function to handle form submission with toast notification
   const onSubmit2 = (data) => {
     toast({
       title: "You submitted the following values:",
@@ -89,6 +92,8 @@ const Dashboard = () => {
       ),
     });
   };
+
+  // Zod schema for form validation
   const formSchema = z.object({
     name: z.string().min(2, {
       message: "Name must be at least 2 characters.",
@@ -101,10 +106,8 @@ const Dashboard = () => {
     }),
     phoneNumber: z.string().refine(
       (value) => {
-        // Eliminar espacios en blanco
         const trimmedValue = value.replace(/\s/g, "");
-        // Expresión regular para validar el formato del número de teléfono
-        const phoneNumberRegex = /^\+\d{11}$/; // Formato: +15558675309
+        const phoneNumberRegex = /^\+\d{11}$/;
         return phoneNumberRegex.test(trimmedValue);
       },
       {
@@ -114,9 +117,10 @@ const Dashboard = () => {
     roles: z.array(z.string()).min(1, {
       message: "At least one role must be selected.",
     }),
-    locked: z.boolean(), // Agregamos la validación para el campo 'locked'
+    locked: z.boolean(),
   });
 
+  // Form handling using react-hook-form
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -124,21 +128,17 @@ const Dashboard = () => {
       username: selectedUser ? selectedUser.username : "",
       email: selectedUser ? selectedUser.email : "",
       phoneNumber: selectedUser ? selectedUser.phoneNumber : "",
-      roles: selectedUser ? selectedUser.roles : "student", // Agrega el valor predeterminado para el campo 'role'
-      locked: selectedUser ? selectedUser.locked : false, // Agrega el valor predeterminado para el campo 'locked'
+      roles: selectedUser ? selectedUser.roles : "student",
+      locked: selectedUser ? selectedUser.locked : false,
     },
   });
 
+  // Function to handle editing user information
   const handleEditUser = async (formData) => {
     try {
       const { userId } = selectedUser;
-      // console.log(userId);
-
-      // Crear una copia de formData y eliminar la propiedad 'roles'
       const formDataCopy = { ...formData };
       delete formDataCopy.roles;
-
-      // console.log(formDataCopy);
 
       const url = `https://back-end-knex-js.vercel.app/updateUser/${userId}`;
 
@@ -152,70 +152,49 @@ const Dashboard = () => {
 
       if (response.ok) {
         setSuccessMessage("User information updated successfully.");
-        // Redirige a la página de inicio o a la página de dashboard
-
         window.location.reload();
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message);
       }
     } catch (error) {
-      // console.error("Error updating user information:", error);
       setErrorMessage("Error updating user information. Please try again.");
     }
   };
 
+  // Function to handle updating user role
   const handleUserRoleUpdate = async (userId, roles) => {
     try {
-      const { userId } = selectedUser;
-      // console.log(userId, roles);
       const url = `https://back-end-knex-js.vercel.app/updateUserRole/${userId}`;
       const response = await fetch(url, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ roles: roles }), // Envía el rol actualizado como un array
+        body: JSON.stringify({ roles: roles }),
       });
 
       if (response.ok) {
-        // console.log(`User role updated successfully to ${roles}`);
         window.location.reload();
-        // Puedes mostrar un mensaje de éxito si lo deseas
       } else {
         const errorData = await response.json();
         console.error("Error updating user role:", errorData.message);
-        // Puedes mostrar un mensaje de error si lo deseas
       }
     } catch (error) {
       console.error("Error updating user role:", error);
-      // Puedes mostrar un mensaje de error si lo deseas
     }
   };
 
+  // Function to handle form submission
   const onSubmit = async (data) => {
-    // Manejar la actualización de la información del usuario
     await handleEditUser(data);
 
-    // Manejar la actualización del rol del usuario
     const { userId, roles } = data;
     const rolesToSend = Array.isArray(roles) ? roles : [roles];
     await handleUserRoleUpdate(userId, rolesToSend);
   };
 
-  useEffect(() => {
-    if (selectedUser) {
-      form.reset({
-        name: selectedUser.name,
-        username: selectedUser.username,
-        email: selectedUser.email,
-        phoneNumber: selectedUser.phoneNumber,
-        roles: selectedUser.roles,
-        locked: selectedUser.locked,
-      });
-    }
-  }, [selectedUser, form]);
-
+  // Fetching user data from the backend
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -249,22 +228,9 @@ const Dashboard = () => {
           const data = await response.json();
           setLoading(false);
           setUsersData(data.results);
-          console.log(data.results);
-
-          const users = data.results;
-
-          users.forEach((user) => {
-            const roles = user.authorization?.xbpwd96n?.roles;
-
-            if (roles) {
-              // console.log("Roles del usuario founded");
-            } else {
-              console.log("No se encontraron roles para el usuario");
-            }
-          });
         } else {
           console.error(
-            "Error en la respuesta de la solicitud:",
+            "Error fetching data:",
             response.statusText
           );
         }
@@ -276,10 +242,12 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  // Function to handle user selection
   const handleUserSelect = (user) => {
     setSelectedUser(user);
   };
 
+  // Function to delete a user
   const deleteUser = async (userId) => {
     try {
       const response = await fetch(
@@ -294,7 +262,6 @@ const Dashboard = () => {
       );
 
       if (response.ok) {
-        console.log("User deleted successfully");
         setDeleteConfirmation(true);
         window.location.reload();
         return true;
@@ -307,6 +274,7 @@ const Dashboard = () => {
     }
   };
 
+  // Function to handle user deletion confirmation
   const handleClickContinue = async (userId) => {
     try {
       const deletionSuccessful = await deleteUser(userId);
@@ -316,22 +284,27 @@ const Dashboard = () => {
           setSuccessMessage(null);
         }, 3000);
       } else {
-        console.log("User couldnot be deleted ");
+        console.log("User could not be deleted ");
       }
     } catch (error) {
       console.error("An error occurred:", error);
     }
   };
+
+  // Function to handle switch change
   const handleSwitchChange = (newValue) => {
     setEstado(newValue);
     formulario.handleSubmit(onSubmit2)();
   };
+
+  // Sorting users based on sortOrder
   const sortedUsers = usersData.slice().sort((a, b) => {
     if (a.userId < b.userId) return sortOrder === "asc" ? -1 : 1;
     if (a.userId > b.userId) return sortOrder === "asc" ? 1 : -1;
     return 0;
   });
 
+  // Filtering users based on search term, status, and role
   const filteredUsers = sortedUsers.filter((user) => {
     return user.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
@@ -347,12 +320,14 @@ const Dashboard = () => {
     );
   });
 
+  // Function to handle sorting order
   const handleSort = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
   return (
-    <section className="min-h-screen mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-12 sm:mb-6 overflow-x-auto xs:ml-9">      <div className="flex items-center mb-4 space-x-4 mt-2 justify-end">
-        {/* Input para buscar por nombre */}
+    <section className="min-h-screen mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-12 sm:mb-6 overflow-x-auto xs:ml-9">
+      {" "}
+      <div className="flex items-center mb-4 space-x-4 mt-2 justify-end">
         <input
           type="text"
           placeholder="Search by name..."
@@ -406,7 +381,6 @@ const Dashboard = () => {
           </button>
         </div>
       )}
-
       {!loading && (
         <FormProvider {...form}>
           <Table className="text-center mt-1 w-full border-2 rounded-md">
@@ -685,7 +659,6 @@ const Dashboard = () => {
           </Table>
         </FormProvider>
       )}
-
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
       <Footer />
     </section>

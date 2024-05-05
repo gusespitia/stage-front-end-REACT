@@ -18,7 +18,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Userfront from "@userfront/toolkit/react";
 import {
   AlertDialog,
   AlertDialogAction,
