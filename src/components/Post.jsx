@@ -15,7 +15,7 @@ const Post = () => {
   const [posts, setPosts] = useState([]);
   const [titleError, setTitleError] = useState("");
   const [dataError, setDataError] = useState("");
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -35,6 +35,7 @@ const Post = () => {
           throw new Error("Failed to fetch posts");
         }
         const data = await response.json();
+        setLoading(false);
         setPosts(data);
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -74,6 +75,7 @@ const Post = () => {
         }
 
         const result = await response.json();
+        setLoading(false);
         setUserData(result);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -165,6 +167,7 @@ const Post = () => {
         }
 
         const result = await response.json();
+        setLoading(false);
         setUserData(result);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -177,7 +180,8 @@ const Post = () => {
       <div className="border rounded-md xs:mt-4 xs:p-4">
         <h1 className="text-[20px] font-bold m-4 text-center sm:mb-8 sm:mx-auto xs:my-1">
           Here you can see all your posts !
-        </h1>
+        </h1>   
+
         {userData && (
           <section className="flex justify-evenly items-start xs:gap-2 xs:flex-col md:flex-row">
             <div className="mx-8">
@@ -234,39 +238,68 @@ const Post = () => {
             </div>
           </section>
         )}
-
-        {posts.map((post) => (
-          <div
-            key={post.id}
-            className="px-6 border rounded-2xl py-6 mt-20 mb-4 max-w-[600px] shadow-md bg-white flex mx-auto ">
-            <ul className="grid grid-cols-2 grid-cols-custom gap-y-2 ">
-              <Label className="col-start-1">Title:</Label>
-              <li className="text-[16px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
-                {post.title}
-              </li>
-              <Label className="col-start-1">Data:</Label>
-              <div className="text-[15px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: post.data,
-                  }}
-                />
-              </div>
-              <Separator className="mt-3 w-[550px]" />
-              <li className="text-xs text-neutral-800 col-start-1 col-span-2">
-                <Label className="col-start-1 text-neutral-800 ">Posted:</Label>
-                <br />
-                {new Date(post.created_at).toLocaleDateString("en-EN", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                  minute: "numeric",
-                  second: "numeric",
-                })}
-              </li>
-            </ul>
+  {loading && (
+          <div className="text-center mt-14">
+            <button
+              type="button"
+              className="bg-indigo-500 inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed "
+              disabled>
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647zM20 12a8 8 0 01-8 8v4c6.627 0 12-5.373 12-12h-4zm-2-7.938A7.962 7.962 0 0120 12h4c0-3.042-1.135-5.824-3-7.938l-3 2.647z"></path>
+              </svg>
+              Loading Posts...
+            </button>
           </div>
-        ))}
+        )}
+        {!loading &&
+          posts.map((post) => (
+            <div
+              key={post.id}
+              className="px-6 border rounded-2xl py-6 mt-20 mb-4 max-w-[600px] shadow-md bg-white flex mx-auto ">
+              <ul className="grid grid-cols-2 grid-cols-custom gap-y-2 ">
+                <Label className="col-start-1">Title:</Label>
+                <li className="text-[16px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
+                  {post.title}
+                </li>
+                <Label className="col-start-1">Data:</Label>
+                <div className="text-[15px] text-neutral-500] col-start-2 font-semibold first-letter:uppercase">
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: post.data,
+                    }}
+                  />
+                </div>
+                <Separator className="mt-3 w-[550px]" />
+                <li className="text-xs text-neutral-800 col-start-1 col-span-2">
+                  <Label className="col-start-1 text-neutral-800 ">
+                    Posted:
+                  </Label>
+                  <br />
+                  {new Date(post.created_at).toLocaleDateString("en-EN", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    minute: "numeric",
+                    second: "numeric",
+                  })}
+                </li>
+              </ul>
+            </div>
+          ))}
       </div>
       <Footer />
     </section>

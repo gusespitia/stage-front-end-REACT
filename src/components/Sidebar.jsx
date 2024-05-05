@@ -159,7 +159,7 @@ const Sidebar = () => {
               <div className="flex items-center gap-4 justify-start p-2 border rounded-[8px] bg-white xs:flex-col xs:mt-0 ">
                 <img
                   src={userData.image}
-                  className="border max-w-16 bg-emerald-500 p-0.5 mb-3 rounded-lg xs:mb-0"
+                  className="border bg-white p-0.5 mb-3 rounded-lg xs:mb-0 max-w-24"
                   alt={"Avatar of the user: " + userData.name}
                 />
                 <div>

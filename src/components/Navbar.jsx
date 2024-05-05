@@ -58,7 +58,7 @@ function Navbar() {
     <nav className="bg-gray-800 px-4 fixed w-full z-10 py-1 ">
       <div className="flex justify-between ">
         {/* Logo */}
-        <div className="flex-shrink-0 mr-10">
+        <div className="flex-shrink-0 mr-10 ml-20">
           <NavLink to="/login" exact="true">
             <img
               className="h-14 w-auto"

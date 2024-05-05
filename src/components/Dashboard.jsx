@@ -65,7 +65,7 @@ const Dashboard = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false); // Nuevo estado para la confirmación de eliminación
   const [estado, setEstado] = useState(false);
-  // FILTERS
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterRole, setFilterRole] = useState("");
@@ -247,6 +247,7 @@ const Dashboard = () => {
 
         if (response.ok) {
           const data = await response.json();
+          setLoading(false);
           setUsersData(data.results);
           console.log(data.results);
 
@@ -351,7 +352,7 @@ const Dashboard = () => {
   };
   return (
     <section className="mt-16 md:ml-0 md:mx-1 lg:ml-52 box-content max-w-screen-xl bg-gray-400 border rounded-xl px-4 flex flex-col sm:mx-2 sm:mt-[68px] sm:ml-18 sm:mb-6 overflow-x-auto xs:ml-9 ">
-      <div className="flex items-center mb-4 space-x-4">
+      <div className="flex items-center mb-4 space-x-4 mt-2 justify-end">
         {/* Input para buscar por nombre */}
         <input
           type="text"
@@ -379,281 +380,313 @@ const Dashboard = () => {
           <option value=" ">No roles</option>
         </select>
       </div>
-      <FormProvider {...form}>
-        <Table className="text-center mt-1 w-full border-2 rounded-md">
-          <TableHeader>
-            <TableRow className="bg-neutral-800 hover:bg-neutral-500">
-              <TableHead className="item-table" onClick={handleSort}>
-                ID
-              </TableHead>
-              <TableHead className="item-table">Name</TableHead>
-              <TableHead className="item-table">Username</TableHead>
-              <TableHead className="item-table">Email</TableHead>
-              <TableHead className="item-table">Image</TableHead>
-              <TableHead className="item-table">Phone</TableHead>
-              <TableHead className="item-table">Status</TableHead>
-              <TableHead className="item-table">Roles</TableHead>
-              <TableHead className="item-table">Actions</TableHead>
-              <TableHead className="item-table">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredByRole.map((user, index) => (
-              <TableRow
-                key={index}
-                className={
-                  index % 2 !== 0
-                    ? "hover:translate-x-1 hover:text-blue-900 hover:font-medium"
-                    : "bg-gray-100 hover:translate-x-1 hover:text-blue-900 hover:font-medium"
-                }>
-                <TableCell className="font-medium">{user.userId}</TableCell>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.username}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
-                  <img src={user.image} alt="" width="30px" />
-                </TableCell>
-                <TableCell>{user.phoneNumber}</TableCell>
-                <TableCell>
-                  {" "}
-                  {user.locked ? (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger className="bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 px-4 border-b-4 border-lime-700 hover:border-lime-300 rounded">
-                          Active
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Active</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ) : (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger className="bg-red-400 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
-                          Inactive
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Inactive</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}{" "}
-                </TableCell>
-                <TableCell>
-                  {user.authorization?.xbpwd96n?.roles.join(", ") || "No roles"}
-                </TableCell>
+      {loading && (
+        <div className="text-center mt-14">
+          <button
+            type="button"
+            className="bg-indigo-500 inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed "
+            disabled>
+            <svg
+              className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647zM20 12a8 8 0 01-8 8v4c6.627 0 12-5.373 12-12h-4zm-2-7.938A7.962 7.962 0 0120 12h4c0-3.042-1.135-5.824-3-7.938l-3 2.647z"></path>
+            </svg>
+            Loading Users...
+          </button>
+        </div>
+      )}
 
-                <TableCell>
-                  <AlertDialog>
-                    <AlertDialogTrigger
-                      className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-                      onClick={() => handleUserSelect(user)}>
-                      Edit
-                    </AlertDialogTrigger>
-                    <AlertDialogContent className="bg-slate-400 border rounded-md max-h-[700px]  max-w-[600px] overflow-y-auto">
-                      <AlertDialogHeader className=" text-black">
-                        <AlertDialogTitle className=" text-black">
-                          Edit Form
-                        </AlertDialogTitle>
-                        <AlertDialogDescription className=" text-black text-md">
-                          This action will edit the data of the user:{" "}
-                          <strong> {user.name}</strong>
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
+      {!loading && (
+        <FormProvider {...form}>
+          <Table className="text-center mt-1 w-full border-2 rounded-md">
+            <TableHeader>
+              <TableRow className="bg-neutral-800 hover:bg-neutral-500">
+                <TableHead className="item-table" onClick={handleSort}>
+                  ID
+                </TableHead>
+                <TableHead className="item-table">Name</TableHead>
+                <TableHead className="item-table">Username</TableHead>
+                <TableHead className="item-table">Email</TableHead>
+                <TableHead className="item-table">Image</TableHead>
+                <TableHead className="item-table">Phone</TableHead>
+                <TableHead className="item-table">Status</TableHead>
+                <TableHead className="item-table">Roles</TableHead>
+                <TableHead className="item-table">Actions</TableHead>
+                <TableHead className="item-table">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredByRole.map((user, index) => (
+                <TableRow
+                  key={index}
+                  className={
+                    index % 2 !== 0
+                      ? "hover:translate-x-1 hover:text-blue-900 hover:font-medium"
+                      : "bg-gray-100 hover:translate-x-1 hover:text-blue-900 hover:font-medium"
+                  }>
+                  <TableCell className="font-medium">{user.userId}</TableCell>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    <img src={user.image} alt="" width="30px" />
+                  </TableCell>
+                  <TableCell>{user.phoneNumber}</TableCell>
+                  <TableCell>
+                    {" "}
+                    {user.locked ? (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 px-4 border-b-4 border-lime-700 hover:border-lime-300 rounded">
+                            Active
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Active</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="bg-red-400 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
+                            Inactive
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Inactive</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}{" "}
+                  </TableCell>
+                  <TableCell>
+                    {user.authorization?.xbpwd96n?.roles.join(", ") ||
+                      "No roles"}
+                  </TableCell>
 
-                      <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="max-w-[500px]">
-                        <FormField
-                          control={form.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Name</FormLabel>
-                              <FormControl>
-                                <Input
-                                  defaultValue={field.value}
-                                  onChange={field.onChange}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                  <TableCell>
+                    <AlertDialog>
+                      <AlertDialogTrigger
+                        className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+                        onClick={() => handleUserSelect(user)}>
+                        Edit
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="bg-slate-400 border rounded-md max-h-[700px]  max-w-[600px] overflow-y-auto">
+                        <AlertDialogHeader className=" text-black">
+                          <AlertDialogTitle className=" text-black">
+                            Edit Form
+                          </AlertDialogTitle>
+                          <AlertDialogDescription className=" text-black text-md">
+                            This action will edit the data of the user:{" "}
+                            <strong> {user.name}</strong>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
 
-                        <FormField
-                          control={form.control}
-                          name="username"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Username</FormLabel>
-                              <FormControl>
-                                <Input
-                                  defaultValue={field.value}
-                                  onChange={field.onChange}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Email</FormLabel>
-                              <FormControl>
-                                <Input
-                                  defaultValue={field.value}
-                                  onChange={field.onChange}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="phoneNumber"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Phone Number</FormLabel>
-                              <FormControl>
-                                <Input
-                                  defaultValue={field.value}
-                                  onChange={field.onChange}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <div className="flex gap-8 mt-3">
+                        <form
+                          onSubmit={form.handleSubmit(onSubmit)}
+                          className="max-w-[500px]">
                           <FormField
-                            onSubmit={formulario.handleSubmit(onSubmit2)}
                             control={form.control}
-                            name="locked"
+                            name="name"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="flex justify-around first:mb-4">
-                                  Status
-                                </FormLabel>
+                                <FormLabel>Name</FormLabel>
                                 <FormControl>
-                                  <Switch
-                                    checked={field.value}
-                                    onCheckedChange={(newValue) => {
-                                      field.onChange(newValue);
-                                      handleSwitchChange(newValue);
-                                    }}
+                                  <Input
+                                    defaultValue={field.value}
+                                    onChange={field.onChange}
                                   />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
-                          <button
-                            className="hidden"
-                            type="submit"
-                            disabled={!estado}>
-                            Submit
-                          </button>
 
                           <FormField
                             control={form.control}
-                            name="roles"
+                            name="username"
                             render={({ field }) => (
-                              <FormItem className="w-80">
-                                <FormLabel>Roles</FormLabel>
-                                <Select
-                                  onValueChange={(value) =>
-                                    field.onChange([value])
-                                  } // Convertir el valor a un array
-                                  defaultValue={user.authorization?.xbpwd96n?.roles.join(
-                                    ", "
-                                  )} // Seleccionar el primer valor del array
-                                >
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select a role" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="student">
-                                      Student
-                                    </SelectItem>
-                                    <SelectItem value="teacher">
-                                      Teacher
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <FormDescription></FormDescription>
+                              <FormItem>
+                                <FormLabel>Username</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    defaultValue={field.value}
+                                    onChange={field.onChange}
+                                  />
+                                </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
-                        </div>
-                        {/* <div className="h-6 text-center bg-black w-full mt-24 p-4"> */}
-                        {successMessage ? (
-                          <div>
-                            <p className="text-green-600">{successMessage}</p>
-                            <AlertDialogFooter className="mt-7 gap-4">
-                              <AlertDialogAction>Exit</AlertDialogAction>
-                            </AlertDialogFooter>
+
+                          <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    defaultValue={field.value}
+                                    onChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="phoneNumber"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Phone Number</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    defaultValue={field.value}
+                                    onChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <div className="flex gap-8 mt-3">
+                            <FormField
+                              onSubmit={formulario.handleSubmit(onSubmit2)}
+                              control={form.control}
+                              name="locked"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="flex justify-around first:mb-4">
+                                    Status
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={(newValue) => {
+                                        field.onChange(newValue);
+                                        handleSwitchChange(newValue);
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <button
+                              className="hidden"
+                              type="submit"
+                              disabled={!estado}>
+                              Submit
+                            </button>
+
+                            <FormField
+                              control={form.control}
+                              name="roles"
+                              render={({ field }) => (
+                                <FormItem className="w-80">
+                                  <FormLabel>Roles</FormLabel>
+                                  <Select
+                                    onValueChange={(value) =>
+                                      field.onChange([value])
+                                    } // Convertir el valor a un array
+                                    defaultValue={user.authorization?.xbpwd96n?.roles.join(
+                                      ", "
+                                    )} // Seleccionar el primer valor del array
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select a role" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="student">
+                                        Student
+                                      </SelectItem>
+                                      <SelectItem value="teacher">
+                                        Teacher
+                                      </SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormDescription></FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
                           </div>
-                        ) : (
-                          <div>
-                            <AlertDialogFooter className="mt-7 gap-4">
-                              <AlertDialogCancel className="bg-white text-black">
-                                Cancel
-                              </AlertDialogCancel>
-                              <Button type="submit">Submit</Button>
-                            </AlertDialogFooter>
-                          </div>
-                        )}
-                      </form>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TableCell>
-                <TableCell>
-                  <AlertDialog>
-                    <AlertDialogTrigger className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">
-                      Delete
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete your account and remove your data from our
-                          servers.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={async () => {
-                            await handleClickContinue(user.userId);
-                            // Muestra la alerta de usuario eliminado exitosamente después de que la solicitud sea exitosa
-                            setSuccessMessage(
-                              "User deleted successfully. This action cannot be undone."
-                            );
-                          }}>
-                          Continue
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </FormProvider>
+                          {/* <div className="h-6 text-center bg-black w-full mt-24 p-4"> */}
+                          {successMessage ? (
+                            <div>
+                              <p className="text-green-600">{successMessage}</p>
+                              <AlertDialogFooter className="mt-7 gap-4">
+                                <AlertDialogAction>Exit</AlertDialogAction>
+                              </AlertDialogFooter>
+                            </div>
+                          ) : (
+                            <div>
+                              <AlertDialogFooter className="mt-7 gap-4">
+                                <AlertDialogCancel className="bg-white text-black">
+                                  Cancel
+                                </AlertDialogCancel>
+                                <Button type="submit">Submit</Button>
+                              </AlertDialogFooter>
+                            </div>
+                          )}
+                        </form>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </TableCell>
+                  <TableCell>
+                    <AlertDialog>
+                      <AlertDialogTrigger className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">
+                        Delete
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete your account and remove your data from our
+                            servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={async () => {
+                              await handleClickContinue(user.userId);
+                              // Muestra la alerta de usuario eliminado exitosamente después de que la solicitud sea exitosa
+                              setSuccessMessage(
+                                "User deleted successfully. This action cannot be undone."
+                              );
+                            }}>
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </FormProvider>
+      )}
+
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
       <Footer />
     </section>
