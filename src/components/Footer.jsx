@@ -1,7 +1,13 @@
 const Footer = () => {
   return (
-    <footer className="text-center mt-12 font-semibold xs:mb-4">
-      <p> &copy; This project is licensed under the MIT License.</p>
+    <footer className="flex mx-auto my-7 max-w-20">
+     
+            <img
+              src="./images/Synta-logo-klein.png"
+              alt="Logo"
+              className="object-fit object-cover"
+            />
+   
     </footer>
   );
 };
