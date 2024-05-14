@@ -59,7 +59,7 @@ function Navbar() {
       <div className="flex justify-between ">
         {/* Logo */}
         <div className="flex-shrink-0 mr-10 ml-20">
-          <NavLink to="/login" exact="true">
+          <NavLink to="/home" exact="true">
             <img
               className="h-14 w-auto"
               src="./images/logo.png"
